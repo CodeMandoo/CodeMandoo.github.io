@@ -33,8 +33,13 @@
 </style>
 
 <body style="margin : 0px; overflow: hidden;">
-  <a-box material="color: yellow" gps-entity-place="latitude: <your-latitude>; longitude: <your-longitude>" position="0 30 0"/>
-    <a-camera gps-camera rotation-reader></a-camera>
+  <a-scene
+  vr-mode-ui="enabled: false"
+  arjs='sourceType: webcam; videoTexture: true; debugUIEnabled: false;'>
+
+  <a-camera gps-camera='simulateLatitude: 51.049; simulateLongitude: -0.723' rotation-reader></a-camera>
+  <a-text value="This will always face the user." look-at="[gps-camera]" scale="75 75 75" gps-entity-place="latitude: 51.0491; longitude: -0.723;"></a-text>
+</a-scene>
     <!--图像加载前显示加载中...-->
   <!-- <div class="arjs-loader">
     <div>Loading, please wait...</div>
