@@ -9,7 +9,6 @@
     <!-- <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1c2407b26c61958baa93967b5412487cd94b290b/dist/aframe-master.min.js"></script>
     <script src="https://ar.cnxfs.com.cn/aframe-ar-nft.js"></script>
-
 </head>
 <style>
   .arjs-loader {
@@ -38,6 +37,7 @@
   arjs='sourceType: webcam; videoTexture: true; debugUIEnabled: false;'>
 
   <a-camera gps-camera='simulateLatitude: 51.049; simulateLongitude: -0.723' rotation-reader></a-camera>
+  <a-box material="color: yellow" gps-entity-place="latitude: 40; longitude: 116.8"/>
   <a-text value="This will always face the user." look-at="[gps-camera]" scale="75 75 75" gps-entity-place="latitude: 51.0491; longitude: -0.723;"></a-text>
 </a-scene>
     <!--图像加载前显示加载中...-->
