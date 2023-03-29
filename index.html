@@ -33,8 +33,10 @@
 </style>
 
 <body style="margin : 0px; overflow: hidden;">
-  <!--图像加载前显示加载中...-->
-  <div class="arjs-loader">
+  <a-box material="color: yellow" gps-entity-place="latitude: <your-latitude>; longitude: <your-longitude>" position="0 30 0"/>
+    <a-camera gps-camera rotation-reader></a-camera>
+    <!--图像加载前显示加载中...-->
+  <!-- <div class="arjs-loader">
     <div>Loading, please wait...</div>
   </div>
   <a-scene
@@ -42,9 +44,9 @@
     renderer="logarithmicDepthBuffer: true;"
     embedded
     arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false;"
-  >
+  > -->
     <!--我们使用了 cors 代理来避免跨域问题-->
-    <a-nft
+    <!-- <a-nft
       type="nft"
       url="https://arjs-cors-proxy.herokuapp.com/https://raw.githack.com/AR-js-org/AR.js/master/aframe/examples/image-tracking/nft/trex/trex-image/trex"
       smooth="true"
@@ -57,9 +59,9 @@
         scale="5 5 5"
         position="50 150 0"
       >
-      </a-entity>
-    </a-nft>
+      </a-entity> -->
+    <!-- </a-nft>
     <a-entity camera></a-entity>
-  </a-scene>
+  </a-scene> -->
 </body>
 </html>
