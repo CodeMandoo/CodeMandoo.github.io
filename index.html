@@ -25,7 +25,7 @@
         renderer='antialias: true; alpha: true'>
         <a-entity material='color: red' geometry='primitive: box'
             gps-entity-place="latitude: 40.00953; longitude: 116.81509" scale="10 10 10"></a-entity>
-        <a-text value="This content will always face you." look-at="[gps-new-camera]" scale="120 120 120"
+        <a-text value="This content will always face you." look-at="[gps-camera]" scale="120 120 120"
             gps-entity-place="latitude: 40.00953; longitude: 116.81509;"></a-text>
         <a-box material="color: yellow" gps-entity-place="latitude: 40.00953; longitude: 116.81509" />
         <a-camera gps-camera='gpsMinDistance: 5'></a-camera>
@@ -33,31 +33,31 @@
 </body>
 
 <script>
-    window.onload = () => {
-        let testEntityAdded = false;
+    // window.onload = () => {
+    //     let testEntityAdded = false;
 
-        const el = document.querySelector("[gps-new-camera]");
+    //     const el = document.querySelector("[gps-new-camera]");
 
-        el.addEventListener("gps-camera-update-position", e => {
-            if (!testEntityAdded) {
-                alert(`Got first GPS position: lon ${e.detail.position.longitude} lat ${e.detail.position.latitude}`);
-                // Add a box to the north of the initial GPS position
-                const entity = document.createElement("a-box");
-                entity.setAttribute("scale", {
-                    x: 20,
-                    y: 20,
-                    z: 20
-                });
-                entity.setAttribute('material', { color: 'red' });
-                entity.setAttribute('gps-new-entity-place', {
-                    latitude: e.detail.position.latitude + 0.001,
-                    longitude: e.detail.position.longitude
-                });
-                document.querySelector("a-scene").appendChild(entity);
-            }
-            testEntityAdded = true;
-        });
-    };
+    //     el.addEventListener("gps-camera-update-position", e => {
+    //         if (!testEntityAdded) {
+    //             alert(`Got first GPS position: lon ${e.detail.position.longitude} lat ${e.detail.position.latitude}`);
+    //             // Add a box to the north of the initial GPS position
+    //             const entity = document.createElement("a-box");
+    //             entity.setAttribute("scale", {
+    //                 x: 20,
+    //                 y: 20,
+    //                 z: 20
+    //             });
+    //             entity.setAttribute('material', { color: 'red' });
+    //             entity.setAttribute('gps-new-entity-place', {
+    //                 latitude: e.detail.position.latitude + 0.001,
+    //                 longitude: e.detail.position.longitude
+    //             });
+    //             document.querySelector("a-scene").appendChild(entity);
+    //         }
+    //         testEntityAdded = true;
+    //     });
+    // };
 </script>
 
 </html>
