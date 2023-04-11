@@ -8,13 +8,13 @@
     <!-- <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script> -->
     <!-- <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script> -->
     <!-- <script src="https://ar.cnxfs.com.cn/aframe-ar-nft.js"></script> -->
-    <!-- <script type='text/javascript' src="./js/aframe.min.js"></script> -->
-    <!-- <script type='text/javascript' src='./js/ar-threex-location-only.js'></script> -->
+    <script type='text/javascript' src="./js/aframe.min.js"></script>
+    <script type='text/javascript' src='./js/ar-threex-location-only.js'></script>
     <!-- <script type='text/javascript' src="./js/aframe-ar.js"></script> -->
-    <!-- <script src="https://ar.cnxfs.com.cn/aframe-ar-nft.js"></script> -->
-    <script src="./origin/aframe.min.js"></script>
+    <script src="https://ar.cnxfs.com.cn/aframe-ar-nft.js"></script>
+    <!-- <script src="./origin/aframe.min.js"></script>
     <script type='text/javascript' src='./origin/ar-threex-location-only.js'></script>
-    <script type='text/javascript' src='./origin/aframe-ar.js'></script>
+    <script type='text/javascript' src='./origin/aframe-ar.js'></script> -->
 </head>
 
 <body>
@@ -28,13 +28,8 @@
     <!-- </a-scene> -->
     <a-scene arjs='sourceType: webcam; videoTexture: true;' artoolkit>
         <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"
-            gps-entity-place="latitude: 40.008259; longitude: 116.8090"></a-box>
-        <a-entity material='color: red' geometry='primitive: box'
-            gps-entity-place="latitude: 40.008259; longitude: 116.81509" scale="10 10 10"></a-entity>
-        <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
-        <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
-        <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>
-        <a-camera gps-camera rotation-reader></a-camera>
+            gps-new-entity-place="latitude: 40.008259; longitude: 116.8090"></a-box>
+        <a-camera gps-new-camera rotation-reader simulateAltitude="0"></a-camera>
     </a-scene>
     <!-- <a-scene vr-mode-ui='enabled: false' arjs='sourceType: webcam; videoTexture: true; debugUIEnabled: false'
         renderer='antialias: true; alpha: true'>
