@@ -8,15 +8,15 @@
     <!-- <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script> -->
     <!-- <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script> -->
     <!-- <script src="https://ar.cnxfs.com.cn/aframe-ar-nft.js"></script> -->
-    <script type='text/javascript' src="./js/aframe.min.js"></script>
+    <script type='text/javascript' src="./js/aframe.min.js?t=1"></script>
     <!-- <script type='text/javascript' src='./js/ar-threex-location-only.js'></script> -->
-    <script type='text/javascript' src="./js/aframe-ar.js"></script>
+    <script type='text/javascript' src="./js/aframe-ar.js?t=1"></script>
     <!-- <script src="https://ar.cnxfs.com.cn/aframe-ar-nft.js"></script> -->
     <!-- <script src="./origin/aframe.min.js"></script> -->
-    <script type='text/javascript' src='./origin/ar-threex-location-only.js'></script>
+    <script type='text/javascript' src='./origin/ar-threex-location-only.js?t=1'></script>
     <!-- <script type='text/javascript' src='./origin/aframe-ar.js'></script> -->
     <!-- <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script> -->
-    <script src="./js/ar.js"></script>
+    <script src="./js/ar.js?t=1"></script>
 </head>
 
 <body>
@@ -61,7 +61,7 @@
             <a-entity geometry="primitive: box" material="color: #FFC65D" scale="0.5 0.5 0.5"></a-entity>
         </a-entity>
         <!-- AR视角下，相机的位置 -->
-        <a-entity gps-new-camera look-controls></a-entity>
+        <a-entity gps-project-camera look-controls></a-entity>
     </a-scene>
 </body>
 
