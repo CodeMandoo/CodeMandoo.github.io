@@ -47,21 +47,21 @@
     </a-scene> -->
     <a-scene arjs="sourceType: webcam; trackingMethod: best;">
         <!-- 在当前位置创建一个平面 -->
-        <a-entity gps-entity-place="latitude: 40.008259; longitude: 116.8090; altitude: 33.3;">
+        <a-entity gps-new-entity-place="latitude: 40.008259; longitude: 116.8090; altitude: 33.3;">
             <a-plane rotation="-90 0 0" position="0 0.5 0" width="10" height="10" color="#7BC8A4"></a-plane>
         </a-entity>
         <!-- 在当前位置创建一个盒子 -->
-        <a-entity gps-entity-place="latitude: 40.008259; longitude: 116.8090; altitude: 33.3;"
+        <a-entity gps-new-entity-place="latitude: 40.008259; longitude: 116.8090; altitude: 33.3;"
             look-controls-enabled="false" position="0 0.5 -20">
             <a-box color="#4CC3D9" position="0 0.5 0"></a-box>
         </a-entity>
         <!-- 在当前位置创建一个立方体 -->
-        <a-entity gps-entity-place="latitude: 40.008259; longitude: 116.8090; altitude: 33.3;"
+        <a-entity gps-new-entity-place="latitude: 40.008259; longitude: 116.8090; altitude: 33.3;"
             look-controls-enabled="false" position="0 0.5 -30">
             <a-entity geometry="primitive: box" material="color: #FFC65D" scale="0.5 0.5 0.5"></a-entity>
         </a-entity>
         <!-- AR视角下，相机的位置 -->
-        <a-entity gps-camera></a-entity>
+        <a-entity gps-new-camera></a-entity>
     </a-scene>
 </body>
 
