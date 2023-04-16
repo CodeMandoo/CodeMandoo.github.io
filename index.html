@@ -8,15 +8,15 @@
     <!-- <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script> -->
     <!-- <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script> -->
     <!-- <script src="https://ar.cnxfs.com.cn/aframe-ar-nft.js"></script> -->
-    <script type='text/javascript' src="./js/aframe.min.js?t=1"></script>
+    <script type='text/javascript' src="./js/aframe.min.js"></script>
     <!-- <script type='text/javascript' src='./js/ar-threex-location-only.js'></script> -->
-    <script type='text/javascript' src="./js/aframe-ar.js?t=1"></script>
+    <script type='text/javascript' src="./js/aframe-ar.js"></script>
     <!-- <script src="https://ar.cnxfs.com.cn/aframe-ar-nft.js"></script> -->
     <!-- <script src="./origin/aframe.min.js"></script> -->
-    <script type='text/javascript' src='./origin/ar-threex-location-only.js?t=1'></script>
+    <script type='text/javascript' src='./origin/ar-threex-location-only.js'></script>
     <!-- <script type='text/javascript' src='./origin/aframe-ar.js'></script> -->
     <!-- <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script> -->
-    <script src="./js/ar.js?t=1"></script>
+    <script src="./js/ar.js"></script>
 </head>
 
 <body>
@@ -47,17 +47,17 @@
     </a-scene> -->
     <a-scene arjs="sourceType: webcam; trackingMethod: best;">
         <!-- 在当前位置创建一个平面 -->
-        <a-entity gps-projected-entity-place="latitude: 40.008259; longitude: 116.8090; altitude: 33.3;">
+        <a-entity gps-projected-entity-place="latitude: 40.008259; longitude: 116.8090" position="0 33.3 0">
             <a-plane rotation="-90 0 0" position="0 0.5 0" width="10" height="10" color="#7BC8A4"></a-plane>
         </a-entity>
         <!-- 在当前位置创建一个盒子 -->
-        <a-entity gps-projected-entity-place="latitude: 40.008259; longitude: 116.8090; altitude: 33.3;"
-            look-controls-enabled="false" position="0 0.5 -20">
+        <a-entity gps-projected-entity-place="latitude: 40.008259; longitude: 116.8090" position="0 33.3 0"
+            look-controls-enabled="false">
             <a-box color="#4CC3D9" position="0 0.5 0"></a-box>
         </a-entity>
         <!-- 在当前位置创建一个立方体 -->
-        <a-entity gps-projected-entity-place="latitude: 40.008259; longitude: 116.8090; altitude: 33.3;"
-            look-controls-enabled="false" position="0 0.5 -30">
+        <a-entity gps-projected-entity-place="latitude: 40.008259; longitude: 116.8090" look-controls-enabled="false"
+            position="0 0.5 -30">
             <a-entity geometry="primitive: box" material="color: #FFC65D" scale="0.5 0.5 0.5"></a-entity>
         </a-entity>
         <!-- AR视角下，相机的位置 -->
