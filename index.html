@@ -12,15 +12,17 @@
     <!-- <script type='text/javascript' src="./js/aframe-ar.js"></script> -->
     <!-- <script src="./js/ar.js"></script> -->
     <!-- <script src="./origin/aframe.min.js"></script> -->
+    <script src="./js/aframe.min.js"></script>
+    <script src="./js/aframe-ar-nft.js"></script>
     <!-- <script src="https://ar.cnxfs.com.cn/aframe-ar-nft.js"></script> -->
     <!-- <script src="./"> -->
     <!-- <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script> -->
     <!-- <script type='text/javascript' src='./origin/ar-threex-location-only.js'></script> -->
     <!-- <script type='text/javascript' src='./origin/aframe-ar.js'></script> -->
     <!-- <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script> -->
-    <script src="./origin/aframe.min1.js"></script>
-    <script src="./origin/aframe-look-at-component.min.js"></script>
-    <script src="./origin/aframe-ar-nft.js"></script>
+    <!-- <script src="./origin/aframe.min1.js"></script> -->
+    <!-- <script src="./origin/aframe-look-at-component.min.js"></script> -->
+    <!-- <script src="./origin/aframe-ar-nft.js"></script> -->
 </head>
 
 <body>
@@ -64,8 +66,7 @@
     </a-scene> -->
     <a-scene vr-mode-ui="enabled: false" embedded arjs="sourceType: webcam; debugUIEnabled: false;">
         <a-entity gps-new-entity-place="latitude: 40.008259; longitude: 116.8090; distance: 10;">
-            <a-text value="This content will always face you." look-at="[gps-new-camera]" scale="120 120 120"
-                position="0 30 0"></a-text>
+            <a-text value="This content will always face you." scale="120 120 120" position="0 30 0"></a-text>
         </a-entity>
         <a-entity gps-new-entity-place="latitude: 40.00953; longitude: 116.81509;">
             <a-box material="color: yellow"></a-box>
@@ -96,16 +97,16 @@
 </body>
 
 <script>
-    navigator.geolocation.getCurrentPosition(function (position) {
-        var latitude = position.coords.latitude;
-        var longitude = position.coords.longitude;
-        // 在这里可以使用获取到的经纬度来设置基于位置的AR场景
-        var altitude = position.coords.altitude;
-        var accuracy = position.coords.altitudeAccuracy;
+    // navigator.geolocation.getCurrentPosition(function (position) {
+    //     var latitude = position.coords.latitude;
+    //     var longitude = position.coords.longitude;
+    //     // 在这里可以使用获取到的经纬度来设置基于位置的AR场景
+    //     var altitude = position.coords.altitude;
+    //     var accuracy = position.coords.altitudeAccuracy;
 
-        console.log("当前位置：纬度 " + latitude + "，经度 " + longitude);
-        console.log("海拔高度： " + altitude + "米，精度 " + accuracy + "米");
-    });
+    //     console.log("当前位置：纬度 " + latitude + "，经度 " + longitude);
+    //     console.log("海拔高度： " + altitude + "米，精度 " + accuracy + "米");
+    // });
     // window.onload = () => {
     //     let testEntityAdded = false;
 
