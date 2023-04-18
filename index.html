@@ -23,7 +23,7 @@
     <script type='text/javascript' src='./js/ar-threex-location-only.js'></script>
     <!-- <script src="./origin/aframe-look-at-component.min.js"></script> -->
     <!-- <script src="./origin/aframe-ar-nft.js"></script> -->
-    <script src="./js/aframe-ar.js"></script>
+    <script type='text/javascript' src="./js/aframe-ar.js"></script>
     <!-- <script src="./js/ar.js"></script> -->
 </head>
 
@@ -66,7 +66,8 @@
         </a-entity>
         <a-entity gps-projected-camera look-controls></a-entity>
     </a-scene> -->
-    <a-scene vr-mode-ui="enabled: false" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;">
+    <a-scene vr-mode-ui="enabled: false" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
+        renderer='antialias: true; alpha: true'>
         <a-entity gps-entity-place="latitude: 40.008259; longitude: 116.8090;">
             <a-text value="This content will always face you." scale="120 120 120" position="0 30 0"></a-text>
         </a-entity>
@@ -119,7 +120,7 @@
         <a-entity gps-entity-place="latitude: 40.00884; longitude: 116.81100; distance: 800">
             <a-box material="color: pink"></a-box>
         </a-entity> -->
-        <a-camera gps-camera rotation-reader></a-camera>
+        <a-camera gps-camera='gpsMinDistance: 5' rotation-reader></a-camera>
     </a-scene>
     <!-- <a-scene embedded arjs="sourceType: webcam;">
         <a-marker gps-entity-place latitude="40.00985" longitude="116.81486" altitude="33.23">
