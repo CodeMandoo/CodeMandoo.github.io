@@ -19,11 +19,11 @@
     <!-- <script type='text/javascript' src='./origin/aframe-ar.js'></script> -->
     <!-- <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script> -->
     <!-- <script src="./origin/aframe.min1.js"></script> -->
-    <script src="./origin/aframe.min.js"></script>
-    <script type='text/javascript' src='./origin/ar-threex-location-only.js'></script>
+    <script src="./js/aframe.min.js"></script>
+    <script type='text/javascript' src='./js/ar-threex-location-only.js'></script>
     <!-- <script src="./origin/aframe-look-at-component.min.js"></script> -->
     <!-- <script src="./origin/aframe-ar-nft.js"></script> -->
-    <script src="./origin/aframe-ar.js"></script>
+    <script src="./js/aframe-ar.js"></script>
     <!-- <script src="./js/ar.js"></script> -->
 </head>
 
@@ -67,59 +67,59 @@
         <a-entity gps-projected-camera look-controls></a-entity>
     </a-scene> -->
     <a-scene vr-mode-ui="enabled: false" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;">
-        <a-entity gps-new-entity-place="latitude: 40.008259; longitude: 116.8090; distance: 10;">
+        <a-entity gps-entity-place="latitude: 40.008259; longitude: 116.8090;">
             <a-text value="This content will always face you." scale="120 120 120" position="0 30 0"></a-text>
         </a-entity>
-        <a-entity gps-new-entity-place="latitude: 40.00953; longitude: 116.81509;">
+        <a-entity gps-entity-place="latitude: 40.00953; longitude: 116.81509;">
             <a-box material="color: yellow"></a-box>
         </a-entity>
-        <a-entity gps-new-entity-place="latitude: 40.00985; longitude: 116.81486;">
+        <a-entity gps-entity-place="latitude: 40.00985; longitude: 116.81486;">
             <a-box material="color: blue"></a-box>
         </a-entity>
-        <a-entity gps-new-entity-place="latitude: 40.00985; longitude: 116.81486;">
+        <a-entity gps-entity-place="latitude: 40.00985; longitude: 116.81486;">
             <a-box material="color: blue"></a-box>
         </a-entity>
-        <a-entity gps-new-entity-place="latitude: 40.008261; longitude: 116.8092;">
+        <a-entity gps-entity-place="latitude: 40.008261; longitude: 116.8092;">
             <a-box material="color: pink"></a-box>
         </a-entity>
-        <a-entity gps-new-entity-place="latitude: 40.00953; longitude: 116.81509; distance: 10;">
+        <!-- <a-entity gps-entity-place="latitude: 40.00953; longitude: 116.81509; distance: 10;">
             <a-box material="color: yellow"></a-box>
         </a-entity>
-        <a-entity gps-new-entity-place="latitude: 40.00985; longitude: 116.81486; distance: 0.1">
+        <a-entity gps-entity-place="latitude: 40.00985; longitude: 116.81486; distance: 0.1">
             <a-box material="color: blue"></a-box>
         </a-entity>
-        <a-entity gps-new-entity-place="latitude: 40.00985; longitude: 116.81486; distance: 100">
+        <a-entity gps-entity-place="latitude: 40.00985; longitude: 116.81486; distance: 100">
             <a-box material="color: blue"></a-box>
         </a-entity>
-        <a-entity gps-new-entity-place="latitude: 40.008261; longitude: 116.8092; distance: 0.5">
+        <a-entity gps-entity-place="latitude: 40.008261; longitude: 116.8092; distance: 0.5">
             <a-box material="color: pink"></a-box>
-        </a-entity>
+        </a-entity> -->
 
-        <a-entity gps-new-entity-place="latitude: 40.00885; longitude: 116.81101;" distance="10">
+        <a-entity gps-entity-place="latitude: 40.00885; longitude: 116.81101;" distance="10">
             <a-box material="color: yellow"></a-box>
         </a-entity>
-        <a-entity gps-new-entity-place="latitude: 40.00885; longitude: 116.81101;" distance="100">
+        <a-entity gps-entity-place="latitude: 40.00885; longitude: 116.81101;" distance="100">
             <a-box material="color: blue"></a-box>
         </a-entity>
-        <a-entity gps-new-entity-place="latitude: 40.00885; longitude: 116.81101;" distance="1000">
+        <a-entity gps-entity-place="latitude: 40.00885; longitude: 116.81101;" distance="1000">
             <a-box material="color: blue"></a-box>
         </a-entity>
-        <a-entity gps-new-entity-place="latitude: 40.00884; longitude: 116.81100;" distance="800">
+        <a-entity gps-entity-place="latitude: 40.00884; longitude: 116.81100;" distance="800">
             <a-box material="color: pink"></a-box>
         </a-entity>
-        <a-entity gps-new-entity-place="latitude: 40.00885; longitude: 116.81101; distance: 10;">
+        <!-- <a-entity gps-entity-place="latitude: 40.00885; longitude: 116.81101; distance: 10;">
             <a-box material="color: yellow"></a-box>
         </a-entity>
-        <a-entity gps-new-entity-place="latitude: 40.00885; longitude: 116.81101; distance: 100">
+        <a-entity gps-entity-place="latitude: 40.00885; longitude: 116.81101; distance: 100">
             <a-box material="color: blue"></a-box>
         </a-entity>
-        <a-entity gps-new-entity-place="latitude: 40.00885; longitude: 116.81101; distance: 1000">
+        <a-entity gps-entity-place="latitude: 40.00885; longitude: 116.81101; distance: 1000">
             <a-box material="color: blue"></a-box>
         </a-entity>
-        <a-entity gps-new-entity-place="latitude: 40.00884; longitude: 116.81100; distance: 800">
+        <a-entity gps-entity-place="latitude: 40.00884; longitude: 116.81100; distance: 800">
             <a-box material="color: pink"></a-box>
-        </a-entity>
-        <a-camera gps-new-camera rotation-reader> </a-camera>
+        </a-entity> -->
+        <a-camera gps-camera rotation-reader></a-camera>
     </a-scene>
     <!-- <a-scene embedded arjs="sourceType: webcam;">
         <a-marker gps-entity-place latitude="40.00985" longitude="116.81486" altitude="33.23">
