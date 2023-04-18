@@ -10,12 +10,10 @@
 </head>
 
 <body>
-    <a-scene vr-mode-ui='enabled: false' arjs='sourceType: webcam; videoTexture: true; debugUIEnabled: false'
+    <a-scene vr-mode-ui="enabled: false" arjs='sourceType: webcam; videoTexture: true; debugUIEnabled: false;'
         renderer='antialias: true; alpha: true'>
-        <!--
-        <a-camera gps-new-camera='gpsMinDistance: 5' look-controls-enabled='false' arjs-device-orientation-controls></a-camera>
-    -->
-        <a-camera gps-new-camera='gpsMinDistance: 5'></a-camera>
+        <a-camera gps-camera rotation-reader></a-camera>
+        <a-box gps-entity-place='latitude: 40.00985; longitude: 116.81486' color='red' scale='20 20 20'></a-box>
     </a-scene>
     <div id='setloc'
         style='position:absolute; left: 10px; bottom: 2%; z-index:999; background-color: blue; color: white; padding: 10px'>
