@@ -20,10 +20,10 @@
         <a-entity gps-new-entity-place="latitude: 40.008664; longitude: 116.80880;" scale="10 10 10">
             <a-box color="blue"></a-box>
         </a-entity>
-        <a-entity gps-new-entity-place="latitude: 40.00937; longitude: 116.81280;" altitude="32.33" scale="10 10 10">
-            <a-text value="blue"></a-text>
-            <a-box color="blue"></a-box>
-        </a-entity>
+        <a-marker gps-new-entity-place="latitude: 40.00937; longitude: 116.81280;" altitude="32.33" scale="10 10 10">
+            <a-text position="-2 0.5 0" value="blue"></a-text>
+            <a-box position="-2 10 0" color="blue"></a-box>
+        </a-marker>
         <a-entity material='color: yellow' geometry='primitive: box'
             gps-new-entity-place="latitude: 40.00937; longitude: 116.81280;" scale="10 10 10"></a-entity>
         <a-entity gps-new-entity-place="latitude: 40.00937; longitude: 116.81280;" scale="10 10 10">
@@ -51,14 +51,14 @@
 
 <script>
     if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(function(position) {
-    var latitude = position.coords.latitude;
-    var longitude = position.coords.longitude;
-    alert("经度：" + longitude + "，纬度：" + latitude);
-  });
-} else {
-  alert("浏览器不支持 Geolocation API");
-}
+        navigator.geolocation.getCurrentPosition(function (position) {
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            alert("经度：" + longitude + "，纬度：" + latitude);
+        });
+    } else {
+        alert("浏览器不支持 Geolocation API");
+    }
     // window.onload = () => {
     // let testEntitiesAdded = false;
     // alert('If testing the lat/lon manual input on a mobile device, please turn off your GPS to avoid the real location being detected.');
