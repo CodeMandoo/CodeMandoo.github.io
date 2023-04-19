@@ -54,10 +54,10 @@
   navigator.geolocation.getCurrentPosition(function(position) {
     var latitude = position.coords.latitude;
     var longitude = position.coords.longitude;
-    console.log("经度：" + longitude + "，纬度：" + latitude);
+    alert("经度：" + longitude + "，纬度：" + latitude);
   });
 } else {
-  console.log("浏览器不支持 Geolocation API");
+  alert("浏览器不支持 Geolocation API");
 }
     // window.onload = () => {
     // let testEntitiesAdded = false;
