@@ -13,11 +13,11 @@
 <body>
     <a-scene vr-mode-ui='enabled: false' arjs='sourceType: webcam; videoTexture: true; debugUIEnabled: false'
         renderer='antialias: true; alpha: true'>
-        <a-camera gps-camera="accuracy: 10"></a-camera>
+        <a-camera gps-camera="accuracy: 10" rotation-reader></a-camera>
         <a-entity material='color: red' geometry='primitive: box'
             gps-entity-place="latitude: 40.008664; longitude: 116.80880;" scale="10 10 10"></a-entity>
         <a-entity material='color: blue' geometry='primitive: box'
-            gps-entity-place="latitude: 40.008664; longitude: 116.80880;" scale="10 10 10"></a-entity>
+            gps-entity-place="latitude: 40.008664; longitude: 116.80880;" scale="10 10 10" gpsMinDistance="10"></a-entity>
         <a-entity gps-entity-place="latitude: 40.008664; longitude: 116.80880;" scale="10 10 10">
             <a-box color="blue"></a-box>
         </a-entity>
@@ -26,7 +26,7 @@
             <a-box position="-2 10 0" color="blue"></a-box>
         </a-marker>
         <a-entity material='color: yellow' geometry='primitive: box'
-            gps-entity-place="latitude: 40.00937; longitude: 116.81280;" scale="10 10 10"></a-entity>
+            gps-entity-place="latitude: 40.00937; longitude: 116.81280;" scale="10 10 10" gpsMinDistance="10"></a-entity>
         <a-entity gps-entity-place="latitude: 40.00937; longitude: 116.81280;" scale="10 10 10">
             <a-box color="yellow"></a-box>
         </a-entity>
@@ -47,7 +47,7 @@
         Lat:<input id="lat" value="51.049" />
         Lon: <input id="lon" value="-0.723" />
         Min Acc: <input id='minacc' value='1000' /> <input type='button' id='go' value='go' />
-        版本：1.1
+        版本：1.2
     </div>
 </body>
 
