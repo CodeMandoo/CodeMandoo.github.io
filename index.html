@@ -14,6 +14,8 @@
             bottom: 0;
             left: 0;
             z-index: 1000;
+            font-size: 24px;
+            color: blue;
         }
     </style>
 </head>
@@ -21,7 +23,7 @@
 <body>
     <video id='video1' autoplay playsinline style='display:none'></video>
     <canvas id="canvas1" style='background-color: black; width:100%; height:100%; display:block'></canvas>
-    <span class="version">v4.1</span>
+    <span class="version">v4.2</span>
     <script src='./lib/three.js'></script>
     <script src="./lib/ar-threex-location-only.js"></script>
 </body>
@@ -40,7 +42,7 @@ function main() {
     // const arjs = new THREEx.LocationBased(scene, camera);
 
     // You can change the minimum GPS accuracy needed to register a position - by default 1000m
-    const arjs = new THREEx.LocationBased(scene, camera, { gpsMinAccuracy: 1 } );
+    const arjs = new THREEx.LocationBased(scene, camera, { gpsMinAccuracy: 1, minInstance: 1000 } );
     const cam = new THREEx.WebcamRenderer(renderer, '#video1');
 
     const mouseStep = THREE.MathUtils.degToRad(5);
