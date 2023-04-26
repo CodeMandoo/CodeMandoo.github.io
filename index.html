@@ -7,7 +7,7 @@
     <title>GeoAR.js demo</title>
     <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
     <script src="./lib/ar-threex-location-only.js"></script>
-    <script src="./lib/aframe-ar.js"></script>
+    <script src="./lib/aframe-ar-nft.js"></script>
 </head>
 
 <body>
@@ -16,13 +16,14 @@
         <!--
             <a-camera gps-new-camera='gpsMinDistance: 5' look-controls-enabled='false' arjs-device-orientation-controls></a-camera>
         -->
-        <a-camera gps-new-camera='gpsMinDistance: 5'></a-camera>
+        <a-camera gps-projected-camera='gpsMinDistance: 5'></a-camera>
     </a-scene>
     <div id='setloc'
         style='position:absolute; left: 10px; bottom: 2%; z-index:999; background-color: blue; color: white; padding: 10px'>
         Lat:<input id="lat" value="51.049" />
         Lon: <input id="lon" value="-0.723" />
         Min Acc: <input id='minacc' value='1000' /> <input type='button' id='go' value='go' />
+        v4.5
 </body>
 
 <script>
@@ -38,7 +39,7 @@
     window.onload = () => {
         let testEntitiesAdded = false;
         alert('If testing the lat/lon manual input on a mobile device, please turn off your GPS to avoid the real location being detected.');
-        const el = document.querySelector("[gps-new-camera]");
+        const el = document.querySelector("[gps-projected-camera]");
         el.addEventListener("gps-camera-update-position", e => {
             if (!testEntitiesAdded) {
                 alert(`Got first GPS position: lon ${e.detail.position.longitude} lat ${e.detail.position.latitude}`);
@@ -70,7 +71,7 @@
                         z: 20
                     });
                     entity.setAttribute('material', { color: prop.color });
-                    entity.setAttribute('gps-new-entity-place', {
+                    entity.setAttribute('gps-projected-entity-place', {
                         latitude: e.detail.position.latitude + prop.latDis,
                         longitude: e.detail.position.longitude + prop.lonDis
                     });
@@ -86,7 +87,7 @@
             const lon = document.getElementById('lon').value;
             const minacc = document.getElementById('minacc').value;
 
-            el.setAttribute('gps-new-camera', { simulateLatitude: lat, simulateLongitude: lon, positionMinAccuracy: minacc });
+            el.setAttribute('gps-projected-camera', { simulateLatitude: lat, simulateLongitude: lon, positionMinAccuracy: minacc });
         });
     };
 </script>
