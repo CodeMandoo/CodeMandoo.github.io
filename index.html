@@ -38,11 +38,14 @@
     </div>
     <a-scene vr-mode-ui='enabled: false;' renderer="logarithmicDepthBuffer: true; precision: medium;" embedded
         arjs='trackingMethod: best; sourceType: webcam; debugUIEnabled: false;'>
-
+        <a-assets>
+            <img id="trackImg" src="./assets/pinball.jpg">
+        </a-assets>
         <!-- use rawgithack to retrieve the correct url for nft marker (see 'pinball' below) -->
         <a-nft type='nft' url='./assets/trex/trex-image/trex' smooth='true' smoothCount='10' smoothTolerance='0.01'
             smoothThreshold='5'>
-            <a-entity scale="5 5 5" position="150 300 -10" material="./assets/pinball.jpg">
+            <a-entity scale="5 5 5" position="150 300 -100">
+                <a-box src="#trackImg"></a-box>
             </a-entity>
         </a-nft>
         <a-entity camera></a-entity>
