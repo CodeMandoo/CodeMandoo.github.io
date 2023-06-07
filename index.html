@@ -31,30 +31,48 @@
     }
 </style>
 
-<body style='margin : 0px; overflow: hidden;'>
-    <!-- minimal loader shown until image descriptors are loaded -->
-    <div class="arjs-loader">
-        <div>Loading, please wait...</div>
-    </div>
-    <a-scene vr-mode-ui='enabled: false;' renderer="logarithmicDepthBuffer: true; precision: medium;" embedded
-        arjs='trackingMethod: best; sourceType: webcam; debugUIEnabled: false;'>
+<body>
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
         <a-assets>
-            <img id="trackImg" src="./assets/pinball.jpg">
+            <a-asset-item id="model" src="./assets/trex/scene.gltf"></a-asset-item>
         </a-assets>
-        <!-- use rawgithack to retrieve the correct url for nft marker (see 'pinball' below) -->
-        <a-nft type='nft' url='./assets/trex/trex-image/trex' smooth='true' smoothCount='30' smoothTolerance='0.01'
-            smoothThreshold='5'>
-            <a-entity gltf-model="./assets/trex/scene.gltf" position="150 300 0" rotation="90 0 0">
-            </a-entity>
+
+        <a-nft type="nft" url="./assets/pinbal.jpg" smooth="true" smoothCount="15" smoothTolerance="0.01"
+            smoothThreshold="5">
+            <a-entity position="0 0 0" rotation="0 0 0" scale="1 1 1" gltf-model="#model" draggable
+                visible="false"></a-entity>
         </a-nft>
+
         <a-entity camera></a-entity>
     </a-scene>
-</body>
 
-<script>
-    document.querySelector('a-entity').addEventListener('click', function (evt) {
-        console.log(evt);
-    });
-</script>
+    <script>
+        AFRAME.registerComponent('draggable', {
+            init: function () {
+                this.el.setAttribute('look-at', '[camera]');
+                this.el.addEventListener('mousedown', this.onDragStart.bind(this));
+                this.el.addEventListener('mouseup', this.onDragEnd.bind(this));
+                this.el.addEventListener('mouseleave', this.onDragEnd.bind(this));
+                this.el.addEventListener('touchstart', this.onDragStart.bind(this));
+                this.el.addEventListener('touchend', this.onDragEnd.bind(this));
+            },
+            onDragStart: function (evt) {
+                this.isDragging = true;
+                this.previousPosition = { x: evt.detail.intersection.point.x, y: evt.detail.intersection.point.y };
+            },
+            onDragEnd: function () {
+                this.isDragging = false;
+            },
+            tick: function () {
+                if (this.isDragging) {
+                    const currentPosition = this.el.getAttribute('position');
+                    const newPosition = { x: currentPosition.x + (this.previousPosition.x - this.el.object3D.position.x), y: currentPosition.y + (this.previousPosition.y - this.el.object3D.position.y), z: currentPosition.z };
+                    this.el.setAttribute('position', newPosition);
+                    this.previousPosition = { x: this.el.object3D.position.x, y: this.el.object3D.position.y };
+                }
+            }
+        });
+    </script>
+</body>
 
 </html>
