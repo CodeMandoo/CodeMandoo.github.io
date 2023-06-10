@@ -30,7 +30,7 @@
             </a-mixin>
         </a-assets>
         </a-entity>
-        <a-camera wasd-controls position="0 1 1" capture-mouse raycaster="objects: .cube" cursor="rayOrigin:mouse"
+        <a-camera wasd-controls position="0 1 1" capture-mouse raycaster="objects: .cube" cursor="rayOrigin:touch"
             static-body="shape: sphere; sphereRadius: 0.001" super-hands="colliderEvent: raycaster-intersection;
                          colliderEventProperty: els;
                          colliderEndEvent:raycaster-intersection-cleared;
@@ -39,8 +39,7 @@
             material="color: red"></a-entity> -->
         <a-entity class="cube" mixin="cube" mindar-image-target="targetIndex: 0">
             <a-plane id="plane" src="#card" position="0 0 0" height="0.552" width="1" rotation="0 0 0"></a-plane>
-            <a-gltf-model id="model" class="dragable" rotation="0 0 0 " position="0 0 0.1" scale="0.005 0.005 0.005"
-                src="#avatarModel"
+            <a-gltf-model id="model" rotation="0 0 0 " position="0 0 0.1" scale="0.005 0.005 0.005" src="#avatarModel"
                 animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
         </a-entity>
     </a-scene>
