@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
 <style>
-    body{
+    body {
         margin: 0;
     }
-    .speech-listener{
+
+    .speech-listener {
         width: 100%;
         height: 100%;
         background-color: lightblue;
     }
-    .speech-listener__start, .speech-listener__stop{
+
+    .speech-listener__start,
+    .speech-listener__stop {
         position: absolute;
         left: 50%;
         top: 50%;
@@ -28,9 +32,11 @@
         font-size: 24px;
         color: #fff;
     }
+
     .speech-listener__stop {
         background-color: #FF4C26;
     }
+
     .stop-block {
         position: absolute;
         left: 50%;
@@ -41,6 +47,7 @@
         background-color: #fff;
     }
 </style>
+
 <body>
     <div class="speech-listener">
         <div class="speech-listener__result">识别结果</div>
@@ -72,22 +79,22 @@
     var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent
 
     const grammar =
-    "#JSGF V1.0; grammar commands; public <command> = 跑 | 走";
+        "#JSGF V1.0; grammar commands; public <command> = 跑 | 走";
 
     const recognition = new SpeechRecognition();
-    
-    const speechRecognitionList = new SpeechGrammarList();
-    speechRecognitionList.addFromString(grammar, 1);
 
-    recognition.grammars = speechRecognitionList;
-    recognition.continuous = false;
-    recognition.lang = 'zh';
+    const speechRecognitionList = new SpeechGrammarList();
+    // speechRecognitionList.addFromString(grammar, 1);
+
+    // recognition.grammars = speechRecognitionList;
+    recognition.continuous = true;
+    recognition.lang = window.navigator.language;
     // 要不要临时返回识别结果
-    recognition.interimResults = false;
+    recognition.interimResults = true;
     // 每次返回可能匹配的数量
     recognition.maxAlternatives = 1;
 
-    recognition.onresult = function(event) {
+    recognition.onresult = function (event) {
         var last = event.results.length - 1;
         var color = event.results[last][0].transcript;
         document.querySelector('.speech-listener__result').innerText = event.results[0][0].confidence
@@ -109,4 +116,5 @@
     }
 
 </script>
+
 </html>
