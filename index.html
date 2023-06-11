@@ -1,114 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="./js/aframe.min.js"></script>
-    <script src="https://unpkg.com/aframe-event-set-component@^5.0.0/dist/aframe-event-set-component.min.js"></script>
-    <script src="./js/mind-ar/mindar-image-aframe.prod.js"></script>
-    <script src="./js/super-hands.js"></script>
 </head>
-
+<style>
+    body{
+        margin: 0;
+    }
+    .speech-listener{
+        width: 100%;
+        height: 100%;
+        background-color: lightblue;
+    }
+    .speech-listener__start, .speech-listener__stop{
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 200px;
+        height: 200px;
+        line-height: 200px;
+        border-radius: 50%;
+        background-color: #006ce2;
+        text-align: center;
+        font-size: 24px;
+        color: #fff;
+    }
+    .speech-listener__stop {
+        background-color: #FF4C26;
+    }
+    .stop-block {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 50px;
+        height: 50px;
+        background-color: #fff;
+    }
+</style>
 <body>
-    <a-scene avatar-recorder touch-to-click-converter environment="preset: tron; shadow: true"
-        mindar-image="imageTargetSrc: ./assets/mind/targets.mind;" color-space="sRGB"
-        renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false"
-        device-orientation-permission-ui="enabled: false">
-        <a-assets>
-            <img id="card" crossorigin="anonymous"
-                src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/card.png" />
-            <a-asset-item id="avatarModel"
-                src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/softmind/scene.gltf"></a-asset-item>
-            <a-mixin id="cube" hoverable grabbable stretchable draggable droppable shadow
-                event-set__dragdrop="_event: drag-drop;" event-set__hoveron="_event: hover-start;"
-                event-set__hoveroff="_event: hover-end;" event-set__dragon="_event: dragover-start;"
-                event-set__dragoff="_event: dragover-end;">
-            </a-mixin>
-        </a-assets>
-        </a-entity>
-        <a-camera wasd-controls position="0 1 1" capture-touch raycaster="objects: .cube" cursor="rayOrigin:touch"
-            static-body="shape: sphere; sphereRadius: 0.001" super-hands="colliderEvent: raycaster-intersection;
-                         colliderEventProperty: els;
-                         colliderEndEvent:raycaster-intersection-cleared;
-                         colliderEndEventProperty: clearedEls;"></a-camera>
-        <!-- <a-entity hoverable grabbable stretchable draggable droppable class="cube" position="0 0.265 -1"
-            material="color: red"></a-entity> -->
-        <a-entity class="cube" mixin="cube" mindar-image-target="targetIndex: 0">
-            <a-plane id="plane" src="#card" position="0 0 0" height="0.552" width="1" rotation="0 0 0"></a-plane>
-            <a-gltf-model id="model" rotation="0 0 0 " position="0 0 0.1" scale="0.005 0.005 0.005" src="#avatarModel"
-                animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
-        </a-entity>
-    </a-scene>
+    <div class="speech-listener">
+        <div class="speech-listener__result">识别结果</div>
+        <div class="speech-listener__start" onclick="startSpeech()">
+            点击开始说话
+        </div>
+        <div class="speech-listener__stop" style="display: none;" onclick="stopSpeech()">
+            <div class="stop-block"></div>
+        </div>
+    </div>
 </body>
-
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const canvas = document.querySelector('canvas')
-        canvas.addEventListener('mousemove', (e) => {
-            // console.log('move', e);
-        })
-        const plane = document.querySelector('#plane')
-        plane.addEventListener('click', () => {
-            console.log('plane');
-        })
-        const model = document.querySelector('#model')
-        model.addEventListener('click', (e) => {
-            console.log('click', e);
-            console.log(model.components);
-            model.pause()
-            // model.setAttribute('position', { x: 1, y: 1, z: 1 })
+    // const socket = new WebSocket('ws://192.168.123.39:5000');
 
-            // model.flushToDOM()
-            console.log(e.target);
-        })
-        // model.addEventListener('mousedown', (e) => {
-        //     console.log('left', e.target.offsetLeft);
-        //     console.log('down');
-        // })
-        // model.addEventListener('mouseenter', () => {
-        //     console.log('enter');
-        // })
-        // model.addEventListener('mouseleave', (e) => {
-        //     console.log('leave');
+    // // Connection opened
+    // socket.addEventListener('open', function (event) {
+    //     socket.send('Hello Server!');
+    // });
 
-        // })
-        // model.addEventListener('fusing', () => {
-        //     console.log('fusing');
-        // })
-        // model.addEventListener('touchstart', () => {
-        //     console.log('touch');
-        // })
-        // model.addEventListener('targetFound', () => {
-        //     console.log('found');
-        // })
-        // model.addEventListener('targetLost', () => {
-        //     console.log('lost');
-        // })
-    })
-    AFRAME.registerComponent('capture-mouse', {
-        init: function () {
-            this.eventRepeater = this.eventRepeater.bind(this)
-            this.el.sceneEl.addEventListener('loaded', () => {
-                this.el.sceneEl.canvas.addEventListener('mousedown', this.eventRepeater)
-                this.el.sceneEl.canvas.addEventListener('mouseup', this.eventRepeater)
-                this.el.sceneEl.canvas.addEventListener('touchstart', this.eventRepeater)
-                this.el.sceneEl.canvas.addEventListener('touchmove', this.eventRepeater)
-                this.el.sceneEl.canvas.addEventListener('touchend', this.eventRepeater)
-            }, { once: true })
-        },
-        eventRepeater: function (evt) {
-            if (evt.type.startsWith('touch')) {
-                evt.preventDefault()
-                // avoid repeating touchmove because it interferes with look-controls
-                if (evt.type === 'touchmove') { return }
-            }
-            console.log(evt.type, evt);
-            this.el.emit(evt.type, evt.detail)
-        }
-    })
+    // // Listen for messages
+    // socket.addEventListener('message', function (event) {
+    //     console.log('Message from server ', event.data);
+    // });
+
+    // socket.send('zou')
+
+    var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
+    var SpeechGrammarList = SpeechGrammarList || window.webkitSpeechGrammarList
+    var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent
+
+    const grammar =
+    "#JSGF V1.0; grammar commands; public <command> = 跑 | 走";
+
+    const recognition = new SpeechRecognition();
+    
+    const speechRecognitionList = new SpeechGrammarList();
+    speechRecognitionList.addFromString(grammar, 1);
+
+    recognition.grammars = speechRecognitionList;
+    recognition.continuous = false;
+    recognition.lang = 'zh';
+    // 要不要临时返回识别结果
+    recognition.interimResults = false;
+    // 每次返回可能匹配的数量
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = function(event) {
+        var last = event.results.length - 1;
+        var color = event.results[last][0].transcript;
+        document.querySelector('.speech-listener__result').innerText = event.results[0][0].confidence
+        console.log('Confidence: ' + event.results[0][0].confidence);
+    }
+
+    function startSpeech() {
+        document.querySelector('.speech-listener__start').style.display = 'none'
+        document.querySelector('.speech-listener__stop').style.display = 'block'
+        console.log('开始说话');
+        recognition.start()
+    }
+
+    function stopSpeech() {
+        document.querySelector('.speech-listener__start').style.display = 'block'
+        document.querySelector('.speech-listener__stop').style.display = 'none'
+        console.log('停止说话');
+        recognition.stop()
+    }
+
 </script>
-
 </html>
