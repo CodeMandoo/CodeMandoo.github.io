@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    body {
+        margin: 0;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    .speech-listener {
+        width: 100%;
+        height: 100%;
+    }
+
+    .speech-listener__result {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 400px;
+        width: 80%;
+        line-height: 32px;
+        text-align: center;
+    }
+
+    .speech-listener__text {
+        width: 100%;
+        background: #eee;
+        text-align: left;
+        padding: 0 10px;
+        min-height: 32px;
+        max-height: 200px;
+        overflow: auto;
+    }
+
+    .speech-listener__start,
+    .speech-listener__stop {
+        position: absolute;
+        left: 50%;
+        bottom: 100px;
+        transform: translateX(-50%);
+        width: 200px;
+        height: 200px;
+        line-height: 200px;
+        border-radius: 50%;
+        background-color: #006ce2;
+        text-align: center;
+        font-size: 24px;
+        color: #fff;
+    }
+
+    .speech-listener__stop {
+        background-color: #FF4C26;
+    }
+
+    .stop-block {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 50px;
+        height: 50px;
+        background-color: #fff;
+    }
+</style>
+
+<body>
+    <div class="speech-listener">
+        <div class="speech-listener__result">
+            <h2>识别结果</h2>
+            <div class="speech-listener__text"></div>
+        </div>
+        <div class="speech-listener__start" onclick="startSpeech()">
+            点击开始说话
+        </div>
+        <div class="speech-listener__stop" style="display: none;" onclick="stopSpeech()">
+            <div class="stop-block"></div>
+        </div>
+    </div>
+</body>
+<script>
+    // const socket = new WebSocket('ws://192.168.123.39:5000');
+
+    // // Connection opened
+    // socket.addEventListener('open', function (event) {
+    //     socket.send('Hello Server!');
+    // });
+
+    // // Listen for messages
+    // socket.addEventListener('message', function (event) {
+    //     console.log('Message from server ', event.data);
+    // });
+
+    // socket.send('zou')
+
+    var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
+    var SpeechGrammarList = SpeechGrammarList || window.webkitSpeechGrammarList
+    var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent
+
+    const grammar =
+        "#JSGF V1.0; grammar colors; public <color> = 跑 | 走";
+
+    const recognition = new SpeechRecognition();
+
+    // const speechRecognitionList = new SpeechGrammarList();
+    // speechRecognitionList.addFromString(grammar, 1);
+
+    // recognition.grammars = speechRecognitionList;
+    // recognition.continuous = true;
+    // recognition.lang = window.navigator.language;
+    // 要不要临时返回识别结果
+    // recognition.interimResults = true;
+    // 每次返回可能匹配的数量
+    // recognition.maxAlternatives = 1;
+
+    recognition.onresult = function (event) {
+        var last = event.results.length - 1;
+        var color = event.results[last][0].transcript;
+        document.querySelector('.speech-listener__text').innerText = event.results[0][0].transcript
+        console.log(event);
+        console.log(event.results[0][0].transcript);
+    }
+
+    function startSpeech() {
+        document.querySelector('.speech-listener__start').style.display = 'none'
+        document.querySelector('.speech-listener__stop').style.display = 'block'
+        console.log('开始说话');
+        recognition.start()
+    }
+
+    function stopSpeech() {
+        document.querySelector('.speech-listener__start').style.display = 'block'
+        document.querySelector('.speech-listener__stop').style.display = 'none'
+        console.log('停止说话');
+        recognition.stop()
+    }
+
+</script>
+
+</html>
