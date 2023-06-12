@@ -23,10 +23,6 @@
     .model {
         height: 100%;
     }
-
-    .model-list img {
-        height: 100%;
-    }
 </style>
 
 <body>
@@ -40,35 +36,91 @@
             <a-asset-item id="avatarModel"
                 src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/softmind/scene.gltf"></a-asset-item>
             <a-mixin id="cube" hoverable grabbable stretchable draggable droppable shadow
+                event-set__stretchon="_event: start-stretch;" event-set__stretchoff="_event: end-stretch;"
                 event-set__dragdrop="_event: drag-drop;" event-set__hoveron="_event: hover-start;"
                 event-set__hoveroff="_event: hover-end;" event-set__dragon="_event: dragover-start;"
                 event-set__dragoff="_event: dragover-end;">
             </a-mixin>
         </a-assets>
-        </a-entity>
-        <a-camera wasd-controls position="0 1 1" capture-touch raycaster="objects: .cube" cursor="rayOrigin:touch"
+        <a-camera wasd-controls position="0 1 1" capture-mouse raycaster="objects: .cube" cursor="rayOrigin:mouse"
             static-body="shape: sphere; sphereRadius: 0.001" super-hands="colliderEvent: raycaster-intersection;
                          colliderEventProperty: els;
                          colliderEndEvent:raycaster-intersection-cleared;
                          colliderEndEventProperty: clearedEls;"></a-camera>
         <!-- <a-entity hoverable grabbable stretchable draggable droppable class="cube" position="0 0.265 -1"
             material="color: red"></a-entity> -->
-        <a-entity id="mindModel" class="cube" mixin="cube" mindar-image-target="targetIndex: 0">
-            <!-- <a-plane id="plane" src="#card" position="0 0 0" height="0.552" width="1" rotation="0 0 0"></a-plane>
-            <a-gltf-model id="model" rotation="0 0 0 " position="0 0 0.1" scale="0.005 0.005 0.005" src="#avatarModel"
-                animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate"> -->
+        <a-entity id="mindModel" mindar-image-target="targetIndex: 0">
+            <!-- <a-plane id="plane" src="#card" position="0 0 0" height="0.552" width="1" rotation="0 0 0"></a-plane> -->
+            <a-gltf-model id="model" class="cube" rotation="0 0 0 " position="0 0 0.1" scale="0.005 0.005 0.005"
+                src="#avatarModel"
+                animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
         </a-entity>
 
 
     </a-scene>
     <div class="model-list">
-        <div class="model" onclick="addModel()">
-            <img class="mindModel" src="./assets/mind.png" alt="">
-        </div>
+        <!-- <img class="model" src="./assets/mind.png" alt=""> -->
     </div>
 </body>
 
 <script>
+    const modelList = [
+        {
+            name: 'mind',
+            id: 1,
+            position: {
+                x: 0,
+                y: 0,
+                z: 0
+            },
+            img: './assets/mind.png'
+        }
+    ]
+
+
+    function renderModelList() {
+        const modelWrap = document.querySelector('.model-list')
+        modelList.forEach((model) => {
+            const modelImg = document.createElement('img')
+            modelImg.src = model.img
+            modelImg.className = 'model'
+            modelImg.addEventListener('click', () => {
+                addModel()
+            })
+            modelWrap.appendChild(modelImg)
+        })
+    }
+
+    function addModel() {
+        const entity = document.querySelector('a-entity')
+        const model = document.createElement('a-gltf-model')
+        model.setAttribute('id', 'model')
+        model.setAttribute('rotation', '0 0 0')
+        model.setAttribute('position', { x: 0.3, y: 0, z: 0.5 })
+        model.setAttribute('scale', '0.005 0.005 0.005')
+        model.setAttribute('src', '#avatarModel')
+        model.setAttribute('class', 'cube')
+        model.setAttribute('id', 'cube')
+        // const plane = document.createElement('a-plane')
+        // plane.setAttribute('src', '#card')
+        // plane.setAttribute('position', '0 0 0')
+        // const box = document.createElement('a-gltf-model')
+        // box.setAttribute('scale', '0.005 0.005 0.005')
+        // box.setAttribute('color', 'pink')
+        // box.setAttribute('src', '#avatarModel')
+        // box.setAttribute('position', '0 0 0')
+        // entity.appendChild(box);
+        // entity.appendChild(plane1);
+        // entity.appendChild(plane);
+        entity.appendChild(model);
+        console.log(model.object3D);
+    }
+
+    function saveModelInfo() {
+
+    }
+
+
     document.addEventListener('DOMContentLoaded', () => {
         // const canvas = document.querySelector('canvas')
         // canvas.addEventListener('mousemove', (e) => {
@@ -111,6 +163,7 @@
         // model.addEventListener('targetLost', () => {
         //     console.log('lost');
         // })
+        renderModelList()
     })
     AFRAME.registerComponent('capture-mouse', {
         init: function () {
@@ -134,18 +187,6 @@
         }
     })
 
-    function addModel() {
-        console.log('add');
-        const entity = document.querySelector('a-entity')
-        const model = document.createElement('a-gltf-model')
-        model.setAttribute('id', 'model')
-        model.setAttribute('rotation', '0 0 0')
-        model.setAttribute('position', '0.3 0 0.5')
-        model.setAttribute('scale', '0.005 0.005 0.005')
-        model.setAttribute('src', '#avatarModel')
-        console.log(model);
-        entity.appendChild(model);
-    }
 </script>
 
 </html>
