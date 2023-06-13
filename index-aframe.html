@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./js/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-event-set-component@^5.0.0/dist/aframe-event-set-component.min.js"></script>
+    <script src="./js/mind-ar/mindar-image-aframe.prod.js"></script>
+    <script src="./js/super-hands.js"></script>
+</head>
+<style>
+    .model-list {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        height: 100px;
+        background-color: #fff;
+    }
+
+    .model {
+        height: 100%;
+    }
+</style>
+
+<body>
+    <a-scene mindar-image="imageTargetSrc: ./assets/mind/targets.mind;" color-space="sRGB"
+        renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false"
+        device-orientation-permission-ui="enabled: false">
+        <a-assets>
+            <img id="card" crossorigin="anonymous"
+                src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/card.png" />
+            <a-asset-item id="avatarModel"
+                src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/softmind/scene.gltf"></a-asset-item>
+
+        </a-assets>
+        <a-camera position="0 0 0" look-controls="enabled: false" raycaster="objects: .model;"
+            cursor="fuse: true; fuseTimeout: 500">
+            <a-entity position="0 0 -1" geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+                material="color: black; shader: flat"></a-entity>
+        </a-camera>
+
+        <a-entity id="mindModel" mindar-image-target="targetIndex: 0">
+            <!-- <a-plane id="plane" src="#card" position="0 0 0" height="0.552" width="1" rotation="0 0 0"></a-plane> -->
+            <a-gltf-model model-interaction class="model" cursor-listener follow-mouse hoverable id="model"
+                rotation="0 0 0 " position="0 0 0.1" scale="0.005 0.005 0.005" src="#avatarModel"
+                animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
+        </a-entity>
+
+
+    </a-scene>
+    <div class="model-list">
+        <!-- <img class="model" src="./assets/mind.png" alt=""> -->
+    </div>
+</body>
+
+<script>
+    const modelList = [
+        {
+            name: 'mind',
+            id: 1,
+            position: {
+                x: 0,
+                y: 0,
+                z: 0
+            },
+            img: './assets/mind.png'
+        }
+    ]
+
+
+    function renderModelList() {
+        const modelWrap = document.querySelector('.model-list')
+        modelList.forEach((model) => {
+            const modelImg = document.createElement('img')
+            modelImg.src = model.img
+            modelImg.className = 'model'
+            modelImg.addEventListener('click', () => {
+                addModel()
+            })
+            modelWrap.appendChild(modelImg)
+        })
+    }
+
+    AFRAME.registerComponent('cursor-listener', {
+        init: function () {
+            var lastIndex = -1;
+            var COLORS = ['red', 'green', 'blue'];
+            this.el.addEventListener('click', function (evt) {
+                lastIndex = (lastIndex + 1) % COLORS.length;
+                this.setAttribute('material', 'color', COLORS[lastIndex]);
+                console.log('I was clicked at: ', evt.detail.intersection.point);
+            });
+        }
+    });
+
+    function addModel() {
+        const entity = document.querySelector('a-entity')
+        const model = document.createElement('a-gltf-model')
+        model.setAttribute('id', 'model')
+        model.setAttribute('rotation', '0 0 0')
+        model.setAttribute('position', { x: 0.3, y: 0, z: 0.5 })
+        model.setAttribute('scale', '0.005 0.005 0.005')
+        model.setAttribute('src', '#avatarModel')
+        model.setAttribute('class', 'cube')
+        model.setAttribute('id', 'cube')
+        // const plane = document.createElement('a-plane')
+        // plane.setAttribute('src', '#card')
+        // plane.setAttribute('position', '0 0 0')
+        // const box = document.createElement('a-gltf-model')
+        // box.setAttribute('scale', '0.005 0.005 0.005')
+        // box.setAttribute('color', 'pink')
+        // box.setAttribute('src', '#avatarModel')
+        // box.setAttribute('position', '0 0 0')
+        // entity.appendChild(box);
+        // entity.appendChild(plane1);
+        // entity.appendChild(plane);
+        entity.appendChild(model);
+        console.log(model.object3D);
+    }
+
+    function saveModelInfo() {
+
+    }
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // const canvas = document.querySelector('canvas')
+        // canvas.addEventListener('mousemove', (e) => {
+        //     // console.log('move', e);
+        // })
+        // const plane = document.querySelector('#plane')
+        // plane.addEventListener('click', () => {
+        //     console.log('plane');
+        // })
+        const model = document.querySelector('#model')
+        model.addEventListener('click', (e) => {
+            console.log('click', e);
+            // console.log(model.components);
+            // model.setAttribute('position', { x: 1, y: 1, z: 1 })
+
+            // model.flushToDOM()
+            // console.log(e.target);
+        })
+        model.addEventListener('mousedown', (e) => {
+            console.log('left', e.target.offsetLeft);
+            console.log('down');
+        })
+        // model.addEventListener('mouseenter', () => {
+        //     console.log('enter');
+        // })
+        // model.addEventListener('mouseleave', (e) => {
+        //     console.log('leave');
+
+        // })
+        // model.addEventListener('fusing', () => {
+        //     console.log('fusing');
+        // })
+        // model.addEventListener('touchstart', () => {
+        //     console.log('touch');
+        // })
+        // model.addEventListener('targetFound', () => {
+        //     console.log('found');
+        // })
+        // model.addEventListener('targetLost', () => {
+        //     console.log('lost');
+        // })
+        renderModelList()
+    })
+    // AFRAME.registerComponent('capture-mouse', {
+    //     init: function () {
+    //         this.eventRepeater = this.eventRepeater.bind(this)
+    //         this.el.sceneEl.addEventListener('loaded', () => {
+    //             this.el.sceneEl.canvas.addEventListener('mousedown', this.eventRepeater)
+    //             this.el.sceneEl.canvas.addEventListener('mouseup', this.eventRepeater)
+    //             this.el.sceneEl.canvas.addEventListener('touchstart', this.eventRepeater)
+    //             this.el.sceneEl.canvas.addEventListener('touchmove', this.eventRepeater)
+    //             this.el.sceneEl.canvas.addEventListener('touchend', this.eventRepeater)
+    //         }, { once: true })
+    //     },
+    //     eventRepeater: function (evt) {
+    //         if (evt.type.startsWith('touch')) {
+    //             evt.preventDefault()
+    //             // avoid repeating touchmove because it interferes with look-controls
+    //             if (evt.type === 'touchmove') { return }
+    //         }
+    //         this.el.emit(evt.type, evt.detail)
+    //     }
+    // })
+    // AFRAME.registerComponent('cursor-listener', {
+    //     init: function () {
+    //         // 在光标移动时触发事件
+    //         this.el.addEventListener('raycaster-intersected', (event) => {
+    //             console.log('raycaster-intersected', event);
+    //             // const intersection = event.detail.intersections[0];
+    //             // const { point, object } = intersection;
+    //             // console.log('Cursor moved to:', point, 'Intersected object:', object.el);
+    //         });
+    //     }
+    // });
+    // AFRAME.registerComponent('follow-mouse', {
+    //     init: function () {
+    //         this.entityEl = this.el;
+    //         this.raycaster = new THREE.Raycaster();
+    //         this.registerEvents();
+    //         this.camera = new THREE.PerspectiveCamera();
+    //     },
+    //     registerEvents: function () {
+    //         const scene = document.querySelector('a-scene')
+    //         // 监听鼠标移动事件
+    //         scene.addEventListener('mousemove', this.onMouseMove.bind(this));
+    //     },
+    //     onMouseMove: function (event) {
+    //         console.log('move');
+    //         // 更新射线方向
+    //         const mousePosition = { x: event.clientX, y: event.clientY };
+    //         this.updateRaycaster(mousePosition);
+    //     },
+    //     updateRaycaster: function (mousePosition) {
+    //         // 更新射线
+    //         const cameraEl = document.querySelector('a-camera');
+    //         const cameraComponent = cameraEl.components.camera;
+    //         this.camera.matrixWorld.copy(cameraComponent.camera.matrixWorld);
+    //         this.camera.projectionMatrix.copy(cameraComponent.camera.projectionMatrix);
+    //         this.raycaster.setFromCamera(mousePosition, this.camera);
+    //         const intersects = this.raycaster.intersectObject(this.el.sceneEl.object3D, true);
+    //         console.log(intersects, intersects.length);
+    //         if (intersects.length > 0) {
+    //             // 设置实体位置为交点位置
+    //             const intersection = intersects[0];
+    //             console.log(intersection.point);
+    //             this.entityEl.setAttribute('position', intersection.point);
+    //         }
+    //     }
+    // });
+    // AFRAME.registerComponent('follow-mouse', {
+    //     init: function () {
+    //         this.entityEl = this.el;
+    //         this.raycaster = new THREE.Raycaster();
+    //         this.registerEvents();
+    //     },
+    //     registerEvents: function () {
+    //         // 监听鼠标移动事件
+    //         const scene = document.querySelector('a-scene')
+    //         scene.addEventListener('mousemove', this.onMouseMove.bind(this));
+    //     },
+    //     onMouseMove: function (event) {
+    //         // 更新射线方向
+    //         const mousePosition = { x: event.clientX, y: event.clientY };
+    //         this.updateRaycaster(mousePosition);
+    //     },
+    //     updateRaycaster: function (mousePosition) {
+    //         // 更新射线
+    //         const cameraEl = document.querySelector('a-camera');
+    //         const cameraComponent = cameraEl.components.camera;
+    //         this.raycaster.setFromCamera(mousePosition, cameraComponent.camera);
+    //         const intersects = this.raycaster.intersectObject(this.el.sceneEl.object3D, true);
+    //         console.log(intersects);
+    //         if (intersects.length > 0) {
+    //             // 设置实体位置为交点位置
+    //             const intersection = intersects[0];
+    //             const position = intersection.point;
+    //             console.log(position);
+    //             this.entityEl.setAttribute('position', position);
+    //         }
+    //     }
+    // });
+    // AFRAME.registerComponent('follow-mouse', {
+    //     init: function () {
+    //         this.entityEl = this.el;
+    //         this.raycaster = new THREE.Raycaster();
+    //         this.registerEvents();
+    //     },
+    //     registerEvents: function () {
+    //         // 监听鼠标移动事件
+    //         const scene = document.querySelector('a-scene')
+    //         scene.addEventListener('mousemove', this.onMouseMove.bind(this));
+    //     },
+    //     onMouseMove: function (event) {
+    //         // 更新射线方向
+    //         const mousePosition = { x: event.clientX, y: event.clientY };
+    //         this.updateRaycaster(mousePosition);
+    //     },
+    //     updateRaycaster: function (mousePosition) {
+    //         // 更新射线
+    //         const cameraEl = document.querySelector('a-camera');
+    //         const cameraComponent = cameraEl.components.camera;
+    //         this.raycaster.setFromCamera(mousePosition, cameraComponent.camera);
+    //         const intersects = this.raycaster.intersectObjects(this.el.sceneEl.object3D.children, true);
+    //         if (intersects.length > 0) {
+    //             // 获取距离相机最近的交点
+    //             const intersection = intersects[0];
+    //             const position = intersection.point;
+    //             console.log(position)
+    //             this.entityEl.setAttribute('position', position);
+    //         }
+    //     }
+    // });
+    AFRAME.registerComponent('follow-mouse', {
+        init: function () {
+            this.entityEl = this.el;
+            this.registerEvents();
+            this.camera = new THREE.PerspectiveCamera();
+            this.el.addEventListener('raycaster-intersected', (event) => {
+                console.log(event);
+                // const intersection = event.detail.intersections[0];
+                // const { point, object } = intersection;
+                // console.log('Cursor moved to:', point, 'Intersected object:', object.el);
+            });
+            this.el.addEventListener('mouseenter', (event) => {
+                console.log('enter', event);
+                // const intersection = event.detail.intersections[0];
+                // const { point, object } = intersection;
+                // console.log('Cursor moved to:', point, 'Intersected object:', object.el);
+            });
+            this.el.sceneEl.addEventListener('mousemove', function () {
+                // const cameraEl = document.querySelector('a-camera');
+                // // 获取相机射线与实体的交点
+                // var intersection = cameraEl.components.raycaster.getIntersection(this.el);
+
+                // if (intersection) {
+                //     // 更新实体位置为交点位置
+                //     this.el.setAttribute('position', intersection.point);
+                // }
+            });
+        },
+        registerEvents: function () {
+            // 监听鼠标移动事件
+            this.el.sceneEl.addEventListener('mousemove', this.onMouseMove.bind(this));
+        },
+        onMouseMove: function (event) {
+            const cameraEl = document.querySelector('a-camera');
+            const cameraComponent = cameraEl.components.camera;
+            this.camera.matrixWorld.copy(cameraComponent.camera.matrixWorld);
+            this.camera.projectionMatrix.copy(cameraComponent.camera.projectionMatrix);
+            const raycaster = new THREE.Raycaster();
+            const mousePosition = { x: event.clientX, y: event.clientY };
+            raycaster.setFromCamera(mousePosition, this.camera);
+            const intersects = raycaster.intersectObjects(this.el.sceneEl.object3D.children, true);
+            if (intersects.length > 0) {
+                const intersection = intersects[0];
+                const position = intersection.point;
+                // console.log(position);
+                this.entityEl.setAttribute('position', position);
+            }
+        }
+    });
+
+</script>
+
+</html>

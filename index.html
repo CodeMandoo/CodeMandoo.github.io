@@ -1,190 +1,252 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="./js/aframe.min.js"></script>
-    <script src="https://unpkg.com/aframe-event-set-component@^5.0.0/dist/aframe-event-set-component.min.js"></script>
-    <script src="./js/mind-ar/mindar-image-aframe.prod.js"></script>
-    <script src="./js/super-hands.js"></script>
-</head>
-<style>
-    .model-list {
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        height: 100px;
-        background-color: #fff;
+    <script async src="https://unpkg.com/es-module-shims@1.7.3/dist/es-module-shims.js"></script>
+    <script type="importmap">
+    {
+      "imports": {
+	"three": "https://unpkg.com/three@0.153.0/build/three.module.js",
+	"three/addons/": "https://unpkg.com/three@0.153.0/examples/jsm/",
+	"mindar-image-three":"https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-three.prod.js"
+      }
     }
+    </script>
+    <style>
+        body {
+            margin: 0;
+        }
 
-    .model {
-        height: 100%;
-    }
-</style>
+        #container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #control {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 2;
+        }
+    </style>
+</head>
 
 <body>
-    <a-scene avatar-recorder touch-to-click-converter environment="preset: tron; shadow: true"
-        mindar-image="imageTargetSrc: ./assets/mind/targets.mind;" color-space="sRGB"
-        renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false"
-        device-orientation-permission-ui="enabled: false">
-        <a-assets>
-            <img id="card" crossorigin="anonymous"
-                src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/card.png" />
-            <a-asset-item id="avatarModel"
-                src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/softmind/scene.gltf"></a-asset-item>
-            <a-mixin id="cube" hoverable grabbable stretchable draggable droppable shadow
-                event-set__stretchon="_event: start-stretch;" event-set__stretchoff="_event: end-stretch;"
-                event-set__dragdrop="_event: drag-drop;" event-set__hoveron="_event: hover-start;"
-                event-set__hoveroff="_event: hover-end;" event-set__dragon="_event: dragover-start;"
-                event-set__dragoff="_event: dragover-end;">
-            </a-mixin>
-        </a-assets>
-        <a-camera wasd-controls position="0 1 1" capture-mouse raycaster="objects: .cube" cursor="rayOrigin:mouse"
-            static-body="shape: sphere; sphereRadius: 0.001" super-hands="colliderEvent: raycaster-intersection;
-                         colliderEventProperty: els;
-                         colliderEndEvent:raycaster-intersection-cleared;
-                         colliderEndEventProperty: clearedEls;"></a-camera>
-        <!-- <a-entity hoverable grabbable stretchable draggable droppable class="cube" position="0 0.265 -1"
-            material="color: red"></a-entity> -->
-        <a-entity id="mindModel" mindar-image-target="targetIndex: 0">
-            <!-- <a-plane id="plane" src="#card" position="0 0 0" height="0.552" width="1" rotation="0 0 0"></a-plane> -->
-            <a-gltf-model id="model" class="cube" rotation="0 0 0 " position="0 0 0.1" scale="0.005 0.005 0.005"
-                src="#avatarModel"
-                animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
-        </a-entity>
-
-
-    </a-scene>
-    <div class="model-list">
-        <!-- <img class="model" src="./assets/mind.png" alt=""> -->
+    <div id="control">
+        <button id="startButton">Start</button>
+        <button id="stopButton">Stop</button>
     </div>
+    <div id="container">
+    </div>
+    <button class="addButton">Add Cube</button>
 </body>
+<script type="module">
+    import * as THREE from 'three';
+    import { MindARThree } from 'mindar-image-three';
+    import { DragControls } from 'three/addons/controls/DragControls.js';
+    const mindarThree = new MindARThree({
+        container: document.querySelector("#container"),
+        imageTargetSrc: "./assets/mind/targets.mind"
+    });
+    const { renderer, scene, camera } = mindarThree;
 
-<script>
-    const modelList = [
-        {
-            name: 'mind',
-            id: 1,
-            position: {
-                x: 0,
-                y: 0,
-                z: 0
-            },
-            img: './assets/mind.png'
+    const start = async () => {
+        await mindarThree.start();
+        init();
+        renderer.setAnimationLoop(() => {
+            renderer.render(scene, camera);
+        });
+    }
+    const startButton = document.querySelector("#startButton");
+    startButton.addEventListener("click", () => {
+        start();
+    });
+    stopButton.addEventListener("click", () => {
+        mindarThree.stop();
+        mindarThree.renderer.setAnimationLoop(null);
+    });
+
+    // var scene, camera, renderer;
+    var cube, isDragging, previousMousePosition;
+    var activeCube
+    var cubes = [];
+
+    function init() {
+        // 创建场景
+        // scene = new THREE.Scene();
+
+        // 创建相机
+        // camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 5;
+
+        // 创建渲染器
+        // renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // 创建一个立方体
+        addCube()
+
+        // 设置拖拽相关的变量
+        isDragging = false;
+        previousMousePosition = {
+            x: 0,
+            y: 0
+        };
+
+        // 添加鼠标事件监听器
+        document.addEventListener('mousedown', onMouseDown, false);
+        document.addEventListener('mousemove', onMouseMove, false);
+        document.addEventListener('mouseup', onMouseUp, false);
+
+        // 添加触摸事件监听器（可选）
+        document.addEventListener('touchstart', onTouchStart, false);
+        document.addEventListener('touchmove', onTouchMove, false);
+        document.addEventListener('touchend', onTouchEnd, false);
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+
+        // 旋转立方体
+        cubes.forEach(function (cube) {
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
+        });
+
+        // 渲染场景
+        renderer.render(scene, camera);
+    }
+
+    function onMouseDown(event) {
+        event.preventDefault();
+        isDragging = true;
+        previousMousePosition.x = event.clientX;
+        previousMousePosition.y = event.clientY;
+    }
+
+    function onMouseMove(event) {
+        event.preventDefault();
+        if (isDragging) {
+            // const mouse = new THREE.Vector2();
+            // console.log(event.clientX, event.clientY);
+            // mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            // mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            // const raycaster = new THREE.Raycaster();
+            // raycaster.setFromCamera(mouse, camera);
+
+            // const intersects = raycaster.intersectObjects(scene.children, true);
+            // if (intersects.length > 0) {
+            //     const intersectPoint = intersects[0].point;
+            //     const deltaMove = {
+            //         x: intersectPoint.x - previousMousePosition.x,
+            //         y: intersectPoint.y - previousMousePosition.y
+            //     };
+
+            //     if (activeCube) {
+            //         console.log(deltaMove);
+            //         activeCube.position.x += deltaMove.x;
+            //         activeCube.position.y += deltaMove.y;
+            //     }
+
+            //     previousMousePosition.x = intersectPoint.x;
+            //     previousMousePosition.y = intersectPoint.y;
+            // }
+            // var deltaMove = {
+            //     x: event.clientX - previousMousePosition.x,
+            //     y: event.clientY - previousMousePosition.y
+            // };
+
+            // if (activeCube) {
+            //     console.log(deltaMove);
+            //     activeCube.position.x += deltaMove.x * 0.01;
+            //     activeCube.position.y -= deltaMove.y * 0.01;
+            // }
+
+
+            // previousMousePosition.x = event.clientX;
+            // previousMousePosition.y = event.clientY;
         }
-    ]
-
-
-    function renderModelList() {
-        const modelWrap = document.querySelector('.model-list')
-        modelList.forEach((model) => {
-            const modelImg = document.createElement('img')
-            modelImg.src = model.img
-            modelImg.className = 'model'
-            modelImg.addEventListener('click', () => {
-                addModel()
-            })
-            modelWrap.appendChild(modelImg)
-        })
     }
 
-    function addModel() {
-        const entity = document.querySelector('a-entity')
-        const model = document.createElement('a-gltf-model')
-        model.setAttribute('id', 'model')
-        model.setAttribute('rotation', '0 0 0')
-        model.setAttribute('position', { x: 0.3, y: 0, z: 0.5 })
-        model.setAttribute('scale', '0.005 0.005 0.005')
-        model.setAttribute('src', '#avatarModel')
-        model.setAttribute('class', 'cube')
-        model.setAttribute('id', 'cube')
-        // const plane = document.createElement('a-plane')
-        // plane.setAttribute('src', '#card')
-        // plane.setAttribute('position', '0 0 0')
-        // const box = document.createElement('a-gltf-model')
-        // box.setAttribute('scale', '0.005 0.005 0.005')
-        // box.setAttribute('color', 'pink')
-        // box.setAttribute('src', '#avatarModel')
-        // box.setAttribute('position', '0 0 0')
-        // entity.appendChild(box);
-        // entity.appendChild(plane1);
-        // entity.appendChild(plane);
-        entity.appendChild(model);
-        console.log(model.object3D);
+    function onMouseUp(event) {
+        event.preventDefault();
+        isDragging = false;
     }
 
-    function saveModelInfo() {
-
+    function onTouchStart(event) {
+        event.preventDefault();
+        isDragging = true;
+        previousMousePosition.x = event.touches[0].clientX;
+        previousMousePosition.y = event.touches[0].clientY;
     }
 
+    function onTouchMove(event) {
+        event.preventDefault();
+        if (isDragging) {
+            var deltaMove = {
+                x: event.touches[0].clientX - previousMousePosition.x,
+                y: event.touches[0].clientY - previousMousePosition.y
+            };
+
+            cubes.forEach(function (cube) {
+                cube.rotation.x += 0.01;
+                cube.rotation.y += 0.01;
+            });
+
+            previousMousePosition.x = event.touches[0].clientX;
+            previousMousePosition.y = event.touches[0].clientY;
+        }
+    }
+
+    function onTouchEnd(event) {
+        event.preventDefault();
+        isDragging = false;
+    }
+
+    function addCube() {
+        // 创建一个立方体
+        const anchor = mindarThree.addAnchor(0);
+        const geometry = new THREE.PlaneGeometry(1, 0.55);
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.5 });
+        const cube = new THREE.Mesh(geometry, material);
+        const controls = new DragControls([cube], camera, renderer.domElement);
+        controls.addEventListener('drag', () => {
+            renderer.render(scene, camera)
+        });
+
+        console.log(cube);
+
+        // 设置立方体的初始位置
+        cube.position.x = Math.random() * 6 - 3;
+        cube.position.y = Math.random() * 6 - 3;
+        anchor.group.add(cube);
+        cubes.push(cube)
+
+        document.addEventListener('click', (event) => {
+            const mouse = new THREE.Vector2();
+            mouse.x = cube.position.x
+            mouse.y = cube.position.y
+
+            const raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(mouse, camera);
+
+            const intersects = raycaster.intersectObject(cube);
+            if (intersects.length > 0) {
+                activeCube = cube
+                console.log('Cube clicked!');
+            }
+        }, false);
+
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
-        // const canvas = document.querySelector('canvas')
-        // canvas.addEventListener('mousemove', (e) => {
-        //     // console.log('move', e);
-        // })
-        // const plane = document.querySelector('#plane')
-        // plane.addEventListener('click', () => {
-        //     console.log('plane');
-        // })
-        // const model = document.querySelector('#model')
-        // model.addEventListener('click', (e) => {
-        //     console.log('click', e);
-        //     console.log(model.components);
-        //     model.pause()
-        //     // model.setAttribute('position', { x: 1, y: 1, z: 1 })
+        const button = document.querySelector('.addButton')
+        button.addEventListener('click', addCube)
 
-        //     // model.flushToDOM()
-        //     console.log(e.target);
-        // })
-        // model.addEventListener('mousedown', (e) => {
-        //     console.log('left', e.target.offsetLeft);
-        //     console.log('down');
-        // })
-        // model.addEventListener('mouseenter', () => {
-        //     console.log('enter');
-        // })
-        // model.addEventListener('mouseleave', (e) => {
-        //     console.log('leave');
-
-        // })
-        // model.addEventListener('fusing', () => {
-        //     console.log('fusing');
-        // })
-        // model.addEventListener('touchstart', () => {
-        //     console.log('touch');
-        // })
-        // model.addEventListener('targetFound', () => {
-        //     console.log('found');
-        // })
-        // model.addEventListener('targetLost', () => {
-        //     console.log('lost');
-        // })
-        renderModelList()
-    })
-    AFRAME.registerComponent('capture-mouse', {
-        init: function () {
-            this.eventRepeater = this.eventRepeater.bind(this)
-            this.el.sceneEl.addEventListener('loaded', () => {
-                this.el.sceneEl.canvas.addEventListener('mousedown', this.eventRepeater)
-                this.el.sceneEl.canvas.addEventListener('mouseup', this.eventRepeater)
-                this.el.sceneEl.canvas.addEventListener('touchstart', this.eventRepeater)
-                this.el.sceneEl.canvas.addEventListener('touchmove', this.eventRepeater)
-                this.el.sceneEl.canvas.addEventListener('touchend', this.eventRepeater)
-            }, { once: true })
-        },
-        eventRepeater: function (evt) {
-            if (evt.type.startsWith('touch')) {
-                evt.preventDefault()
-                // avoid repeating touchmove because it interferes with look-controls
-                if (evt.type === 'touchmove') { return }
-            }
-            console.log(evt.type, evt);
-            this.el.emit(evt.type, evt.detail)
-        }
     })
 
 </script>
