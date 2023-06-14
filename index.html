@@ -30,6 +30,11 @@
             left: 0;
             z-index: 2;
         }
+
+        button {
+            width: 100px;
+            height: 32px;
+        }
     </style>
 </head>
 
@@ -260,6 +265,7 @@
         button.addEventListener('click', addCube)
         const saveBtn = document.querySelector('#saveButton')
         saveBtn.addEventListener('click', () => {
+            alert('click');
             localStorage.setItem('position', JSON.stringify({
                 x: activeCube.position.x,
                 y: activeCube.position.y,
@@ -269,6 +275,7 @@
         })
         const applyBtn = document.querySelector('#applyButton')
         applyBtn.addEventListener('click', () => {
+            alert('click');
             const position = JSON.parse(localStorage.getItem('position'))
             console.log(position);
             activeCube.position.x = position.x
