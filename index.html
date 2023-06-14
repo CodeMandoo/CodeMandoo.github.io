@@ -266,6 +266,7 @@
                 y: activeCube.position.y,
                 z: activeCube.position.z
             }))
+            alert('save');
         })
         const applyBtn = document.querySelector('#applyButton')
         applyBtn.addEventListener('click', () => {
@@ -274,6 +275,7 @@
             activeCube.position.x = position.x
             activeCube.position.y = position.y
             activeCube.position.z = position.z
+            alert('apply');
         })
     })
 
