@@ -265,23 +265,27 @@
         button.addEventListener('click', addCube)
         const saveBtn = document.querySelector('#saveButton')
         saveBtn.addEventListener('click', () => {
-            alert('click');
-            localStorage.setItem('position', JSON.stringify({
-                x: activeCube.position.x,
-                y: activeCube.position.y,
-                z: activeCube.position.z
-            }))
-            alert('save');
+            if (activeCube) {
+                localStorage.setItem('position', JSON.stringify({
+                    x: activeCube.position.x,
+                    y: activeCube.position.y,
+                    z: activeCube.position.z
+                }))
+            } else {
+                alert('未找到实体')
+            }
         })
         const applyBtn = document.querySelector('#applyButton')
         applyBtn.addEventListener('click', () => {
-            alert('click');
             const position = JSON.parse(localStorage.getItem('position'))
             console.log(position);
-            activeCube.position.x = position.x
-            activeCube.position.y = position.y
-            activeCube.position.z = position.z
-            alert('apply');
+            if (position) {
+                activeCube.position.x = position.x
+                activeCube.position.y = position.y
+                activeCube.position.z = position.z
+            } else {
+                alert('还没有保存过')
+            }
         })
     })
 
