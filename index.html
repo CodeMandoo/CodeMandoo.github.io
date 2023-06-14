@@ -37,25 +37,44 @@
     <div id="control">
         <button id="startButton">Start</button>
         <button id="stopButton">Stop</button>
+        <button class="addButton">Add Cube</button>
     </div>
     <div id="container">
     </div>
-    <button class="addButton">Add Cube</button>
+
 </body>
 <script type="module">
     import * as THREE from 'three';
     import { MindARThree } from 'mindar-image-three';
     import { DragControls } from 'three/addons/controls/DragControls.js';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    const loader = new GLTFLoader()
     const mindarThree = new MindARThree({
         container: document.querySelector("#container"),
         imageTargetSrc: "./assets/mind/targets.mind"
     });
     const { renderer, scene, camera } = mindarThree;
+    var cube, isDragging, previousMousePosition;
+    var activeCube
+    var cubes = [];
 
+
+    const raycaster = new THREE.Raycaster()
+    const pointer = new THREE.Vector2()
+    let lastX = pointer.x
+    let lastY = pointer.y
+
+    console.log(mindarThree);
     const start = async () => {
         await mindarThree.start();
         init();
         renderer.setAnimationLoop(() => {
+            raycaster.setFromCamera(pointer, camera);
+            const intersects = raycaster.intersectObjects(scene.children);
+            if (intersects.length > 0 && activeCube) {
+                // console.log(intersects[0].point);
+                // activeCube.position.copy(intersects[0].point)
+            }
             renderer.render(scene, camera);
         });
     }
@@ -68,10 +87,23 @@
         mindarThree.renderer.setAnimationLoop(null);
     });
 
+    function onPointerMove(event) {
+        pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+        pointer.y = - (event.clientY / window.innerHeight) * 2 + 1;
+        const delta = {
+            x: pointer.x - lastX,
+            y: pointer.y - lastY
+        };
+        const deltaPosition = new THREE.Vector3(delta.y, -delta.x, 0);
+        lastX = pointer.x
+        lastY = pointer.y
+        activeCube?.position.add(deltaPosition)
+        console.log('pointer move', deltaPosition, delta);
+    }
+
+    window.addEventListener('pointermove', onPointerMove)
+
     // var scene, camera, renderer;
-    var cube, isDragging, previousMousePosition;
-    var activeCube
-    var cubes = [];
 
     function init() {
         // 创建场景
@@ -123,8 +155,9 @@
     function onMouseDown(event) {
         event.preventDefault();
         isDragging = true;
-        previousMousePosition.x = event.clientX;
-        previousMousePosition.y = event.clientY;
+        // previousMousePosition.x = event.clientX;
+        // previousMousePosition.y = event.clientY;
+
     }
 
     function onMouseMove(event) {
@@ -177,46 +210,16 @@
         isDragging = false;
     }
 
-    function onTouchStart(event) {
-        event.preventDefault();
-        isDragging = true;
-        previousMousePosition.x = event.touches[0].clientX;
-        previousMousePosition.y = event.touches[0].clientY;
-    }
-
-    function onTouchMove(event) {
-        event.preventDefault();
-        if (isDragging) {
-            var deltaMove = {
-                x: event.touches[0].clientX - previousMousePosition.x,
-                y: event.touches[0].clientY - previousMousePosition.y
-            };
-
-            cubes.forEach(function (cube) {
-                cube.rotation.x += 0.01;
-                cube.rotation.y += 0.01;
-            });
-
-            previousMousePosition.x = event.touches[0].clientX;
-            previousMousePosition.y = event.touches[0].clientY;
-        }
-    }
-
-    function onTouchEnd(event) {
-        event.preventDefault();
-        isDragging = false;
-    }
-
     function addCube() {
         // 创建一个立方体
         const anchor = mindarThree.addAnchor(0);
         const geometry = new THREE.PlaneGeometry(1, 0.55);
         const material = new THREE.MeshBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.5 });
-        const cube = new THREE.Mesh(geometry, material);
-        const controls = new DragControls([cube], camera, renderer.domElement);
-        controls.addEventListener('drag', () => {
-            renderer.render(scene, camera)
-        });
+        let cube = new THREE.Mesh(geometry, material);
+        // const controls = new DragControls([cube], camera, renderer.domElement);
+        // controls.addEventListener('drag', () => {
+        //     renderer.render(scene, camera)
+        // });
 
         console.log(cube);
 
@@ -230,17 +233,39 @@
             const mouse = new THREE.Vector2();
             mouse.x = cube.position.x
             mouse.y = cube.position.y
-
-            const raycaster = new THREE.Raycaster();
-            raycaster.setFromCamera(mouse, camera);
-
-            const intersects = raycaster.intersectObject(cube);
-            if (intersects.length > 0) {
+            if (activeCube === cube) {
+                activeCube = null
+            } else {
                 activeCube = cube
-                console.log('Cube clicked!');
             }
+
+
+            // const raycaster = new THREE.Raycaster();
+            // raycaster.setFromCamera(mouse, camera);
+
+            // const intersects = raycaster.intersectObject(cube);
+            // if (intersects.length > 0) {
+            //     console.log('drag', cube);
+
+            //     console.log('Cube clicked!');
+            // }
         }, false);
 
+        // loader.load('https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/softmind/scene.gltf',
+        //     (gltf) => {
+        //         cube = gltf.scene
+        //         console.log('loaded', cube);
+        //         const controls = new DragControls([cube], camera, renderer.domElement);
+        //         controls.addEventListener('drag', (e) => {
+        //             console.log(e, e.object.position, cube.position);
+
+        //             // cube.position.set(e.object.position.x, e.object.position.y, e.object.position.z);
+        //         })
+        //         cube.position.set(0, 0, 0);
+        //         cube.rotation.set(0, 0, 0);
+        //         cube.scale.set(0.005, 0.005, 0.005);
+        //         anchor.group.add(cube);
+        //     })
     }
 
     document.addEventListener('DOMContentLoaded', () => {
