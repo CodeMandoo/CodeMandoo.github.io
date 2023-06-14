@@ -38,6 +38,8 @@
         <button id="startButton">Start</button>
         <button id="stopButton">Stop</button>
         <button class="addButton">Add Cube</button>
+        <button id="saveButton">save</button>
+        <button id="applyButton">apply</button>
     </div>
     <div id="container">
     </div>
@@ -256,7 +258,23 @@
     document.addEventListener('DOMContentLoaded', () => {
         const button = document.querySelector('.addButton')
         button.addEventListener('click', addCube)
-
+        const saveBtn = document.querySelector('#saveButton')
+        saveBtn.addEventListener('click', () => {
+            console.log(activeCube.position);
+            localStorage.setItem('position', JSON.stringify({
+                x: activeCube.position.x,
+                y: activeCube.position.y,
+                z: activeCube.position.z
+            }))
+        })
+        const applyBtn = document.querySelector('#applyButton')
+        applyBtn.addEventListener('click', () => {
+            const position = JSON.parse(localStorage.getItem('position'))
+            console.log(position);
+            activeCube.position.x = position.x
+            activeCube.position.y = position.y
+            activeCube.position.z = position.z
+        })
     })
 
 </script>
