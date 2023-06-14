@@ -93,6 +93,33 @@
         mindarThree.stop();
         mindarThree.renderer.setAnimationLoop(null);
     });
+    const button = document.querySelector('.addButton')
+    button.addEventListener('click', addCube)
+    const saveBtn = document.querySelector('#saveButton')
+    saveBtn.addEventListener('click', () => {
+        if (activeCube) {
+            localStorage.setItem('position', JSON.stringify({
+                x: activeCube.position.x,
+                y: activeCube.position.y,
+                z: activeCube.position.z
+            }))
+            alert('保存成功')
+        } else {
+            alert('未找到实体')
+        }
+    })
+    const applyBtn = document.querySelector('#applyButton')
+    applyBtn.addEventListener('click', () => {
+        const position = JSON.parse(localStorage.getItem('position'))
+        console.log(position);
+        if (position) {
+            activeCube.position.x = position.x
+            activeCube.position.y = position.y
+            activeCube.position.z = position.z
+        } else {
+            alert('还没有保存过')
+        }
+    })
 
     function onPointerMove(event) {
         pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -260,35 +287,7 @@
 
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const button = document.querySelector('.addButton')
-        button.addEventListener('click', addCube)
-        const saveBtn = document.querySelector('#saveButton')
-        saveBtn.addEventListener('click', () => {
-            if (activeCube) {
-                localStorage.setItem('position', JSON.stringify({
-                    x: activeCube.position.x,
-                    y: activeCube.position.y,
-                    z: activeCube.position.z
-                }))
-                alert('保存成功')
-            } else {
-                alert('未找到实体')
-            }
-        })
-        const applyBtn = document.querySelector('#applyButton')
-        applyBtn.addEventListener('click', () => {
-            const position = JSON.parse(localStorage.getItem('position'))
-            console.log(position);
-            if (position) {
-                activeCube.position.x = position.x
-                activeCube.position.y = position.y
-                activeCube.position.z = position.z
-            } else {
-                alert('还没有保存过')
-            }
-        })
-    })
+
 
 </script>
 
