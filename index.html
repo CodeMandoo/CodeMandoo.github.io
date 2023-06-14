@@ -73,8 +73,8 @@
         renderer.setAnimationLoop(() => {
             raycaster.setFromCamera(pointer, camera);
             const intersects = raycaster.intersectObjects(scene.children);
-            if (intersects.length > 0 && activeCube) {
-                // console.log(intersects[0].point);
+            if (intersects.length > 0) {
+                console.log(intersects[0]);
                 // activeCube.position.copy(intersects[0].point)
             }
             renderer.render(scene, camera);
@@ -100,7 +100,7 @@
         lastX = pointer.x
         lastY = pointer.y
         activeCube?.position.add(deltaPosition)
-        console.log('pointer move', deltaPosition, delta);
+        // console.log('pointer move', deltaPosition, delta);
     }
 
     // window.addEventListener('pointermove', onPointerMove)
@@ -207,7 +207,7 @@
         let cube = new THREE.Mesh(geometry, material);
         const controls = new DragControls([cube], camera, renderer.domElement);
         controls.addEventListener('drag', () => {
-
+            activeCube = cube
         });
 
         // 设置立方体的初始位置
@@ -230,15 +230,15 @@
         //         anchor.group.add(cube);
         //     })
 
-        document.addEventListener('click', (event) => {
-            const mouse = new THREE.Vector2();
-            mouse.x = cube.position.x
-            mouse.y = cube.position.y
-            if (activeCube === cube) {
-                activeCube = null
-            } else {
-                activeCube = cube
-            }
+        document.addEventListener('touchstart', (event) => {
+            // activeCube = cube
+        }, false);
+        document.addEventListener('mouseenter', (event) => {
+            // console.log(cube);
+            // const mouse = new THREE.Vector2();
+            // mouse.x = cube.position.x
+            // mouse.y = cube.position.y
+            // activeCube = cube
 
 
             // const raycaster = new THREE.Raycaster();
@@ -260,7 +260,6 @@
         button.addEventListener('click', addCube)
         const saveBtn = document.querySelector('#saveButton')
         saveBtn.addEventListener('click', () => {
-            console.log(activeCube.position);
             localStorage.setItem('position', JSON.stringify({
                 x: activeCube.position.x,
                 y: activeCube.position.y,
