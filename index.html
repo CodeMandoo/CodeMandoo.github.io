@@ -101,7 +101,7 @@
         console.log('pointer move', deltaPosition, delta);
     }
 
-    window.addEventListener('pointermove', onPointerMove)
+    // window.addEventListener('pointermove', onPointerMove)
 
     // var scene, camera, renderer;
 
@@ -137,19 +137,6 @@
         // document.addEventListener('touchstart', onTouchStart, false);
         // document.addEventListener('touchmove', onTouchMove, false);
         // document.addEventListener('touchend', onTouchEnd, false);
-    }
-
-    function animate() {
-        requestAnimationFrame(animate);
-
-        // 旋转立方体
-        cubes.forEach(function (cube) {
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.01;
-        });
-
-        // 渲染场景
-        renderer.render(scene, camera);
     }
 
     function onMouseDown(event) {
@@ -221,13 +208,25 @@
         //     renderer.render(scene, camera)
         // });
 
-        console.log(cube);
+        // // 设置立方体的初始位置
+        // cube.position.x = 0;
+        // cube.position.y = 0;
+        // anchor.group.add(cube);
 
-        // 设置立方体的初始位置
-        cube.position.x = 0;
-        cube.position.y = 0;
-        anchor.group.add(cube);
-        cubes.push(cube)
+        loader.load('https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/softmind/scene.gltf',
+            (gltf) => {
+                cube = gltf.scene
+                console.log('loaded', cube);
+                const controls = new DragControls([cube], camera, renderer.domElement);
+                controls.addEventListener('drag', (e) => {
+
+                    // cube.position.set(e.object.position.x, e.object.position.y, e.object.position.z);
+                })
+                cube.position.set(0, 0, 0);
+                cube.rotation.set(0, 0, 0);
+                cube.scale.set(0.005, 0.005, 0.005);
+                anchor.group.add(cube);
+            })
 
         document.addEventListener('click', (event) => {
             const mouse = new THREE.Vector2();
@@ -251,21 +250,7 @@
             // }
         }, false);
 
-        // loader.load('https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/softmind/scene.gltf',
-        //     (gltf) => {
-        //         cube = gltf.scene
-        //         console.log('loaded', cube);
-        //         const controls = new DragControls([cube], camera, renderer.domElement);
-        //         controls.addEventListener('drag', (e) => {
-        //             console.log(e, e.object.position, cube.position);
 
-        //             // cube.position.set(e.object.position.x, e.object.position.y, e.object.position.z);
-        //         })
-        //         cube.position.set(0, 0, 0);
-        //         cube.rotation.set(0, 0, 0);
-        //         cube.scale.set(0.005, 0.005, 0.005);
-        //         anchor.group.add(cube);
-        //     })
     }
 
     document.addEventListener('DOMContentLoaded', () => {
