@@ -203,30 +203,30 @@
         const geometry = new THREE.PlaneGeometry(1, 0.55);
         const material = new THREE.MeshBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.5 });
         let cube = new THREE.Mesh(geometry, material);
-        // const controls = new DragControls([cube], camera, renderer.domElement);
-        // controls.addEventListener('drag', () => {
-        //     renderer.render(scene, camera)
-        // });
+        const controls = new DragControls([cube], camera, renderer.domElement);
+        controls.addEventListener('drag', () => {
 
-        // // 设置立方体的初始位置
-        // cube.position.x = 0;
-        // cube.position.y = 0;
-        // anchor.group.add(cube);
+        });
 
-        loader.load('https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/softmind/scene.gltf',
-            (gltf) => {
-                cube = gltf.scene
-                console.log('loaded', cube);
-                const controls = new DragControls([cube], camera, renderer.domElement);
-                controls.addEventListener('drag', (e) => {
+        // 设置立方体的初始位置
+        cube.position.x = 0;
+        cube.position.y = 0;
+        anchor.group.add(cube);
 
-                    // cube.position.set(e.object.position.x, e.object.position.y, e.object.position.z);
-                })
-                cube.position.set(0, 0, 0);
-                cube.rotation.set(0, 0, 0);
-                cube.scale.set(0.005, 0.005, 0.005);
-                anchor.group.add(cube);
-            })
+        // loader.load('https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/softmind/scene.gltf',
+        //     (gltf) => {
+        //         cube = gltf.scene
+        //         console.log('loaded', cube);
+        //         const controls = new DragControls([cube], camera, renderer.domElement);
+        //         controls.addEventListener('drag', (e) => {
+
+        //             // cube.position.set(e.object.position.x, e.object.position.y, e.object.position.z);
+        //         })
+        //         cube.position.set(0, 0, 0);
+        //         cube.rotation.set(0, 0, 0);
+        //         cube.scale.set(0.005, 0.005, 0.005);
+        //         anchor.group.add(cube);
+        //     })
 
         document.addEventListener('click', (event) => {
             const mouse = new THREE.Vector2();
