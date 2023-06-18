@@ -42,7 +42,7 @@
     <div id="control">
         <button id="startButton">Start</button>
         <button id="stopButton">Stop</button>
-        <button class="addButton">Add Cube</button>
+        <button id="addButton">Add Cube</button>
         <button id="saveButton">save</button>
         <button id="applyButton">apply</button>
     </div>
@@ -61,234 +61,165 @@
         imageTargetSrc: "./assets/mind/targets.mind"
     });
     const { renderer, scene, camera } = mindarThree;
-    var cube, isDragging, previousMousePosition;
-    var activeCube
-    var cubes = [];
 
+    // 创建环境光
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    // 创建平行光
+    // const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    // directionalLight.position.set(1, 1, 1);
+    scene.add(ambientLight);
 
+    // 每个实体的动画混合器集合
+    let mixers = []
+    // 每个实体对应的时钟集合
+    let clocks = []
+    // 模型集合
+    let models = []
+    // 当前拖拽模型
+    let activeModel = null
+
+    // 射线
     const raycaster = new THREE.Raycaster()
+    // 鼠标位置
     const pointer = new THREE.Vector2()
-    let lastX = pointer.x
-    let lastY = pointer.y
 
-    console.log(mindarThree);
     const start = async () => {
         await mindarThree.start();
         init();
-        renderer.setAnimationLoop(() => {
-            raycaster.setFromCamera(pointer, camera);
-            const intersects = raycaster.intersectObjects(scene.children);
-            if (intersects.length > 0) {
-                console.log(intersects[0]);
-                // activeCube.position.copy(intersects[0].point)
-            }
-            renderer.render(scene, camera);
-        });
+        animate()
     }
-    const startButton = document.querySelector("#startButton");
-    startButton.addEventListener("click", () => {
-        start();
-    });
-    stopButton.addEventListener("click", () => {
-        mindarThree.stop();
-        mindarThree.renderer.setAnimationLoop(null);
-    });
-    const button = document.querySelector('.addButton')
-    button.addEventListener('click', addCube)
-    const saveBtn = document.querySelector('#saveButton')
-    saveBtn.addEventListener('click', () => {
-        if (activeCube) {
-            localStorage.setItem('position', JSON.stringify({
-                x: activeCube.position.x,
-                y: activeCube.position.y,
-                z: activeCube.position.z
-            }))
-            alert('保存成功')
-        } else {
-            alert('未找到实体')
+
+    function init() {
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        window.addEventListener('mousemove', onPointerMove)
+
+        // 创建一个立方体
+        loadGLTF()
+    }
+
+    // 渲染
+    function animate() {
+        requestAnimationFrame(animate)
+        // 可使用renderer.setAnimationLoop
+        // 更新每个实体的动画混合器
+        mixers.forEach((mixer, index) => {
+            // 获取对应实体时钟
+            const clock = clocks[index]
+            const delta = clock.getDelta()
+            mixer.update(delta)
+        })
+        // 设置射线位置和方向
+        raycaster.setFromCamera(pointer, camera);
+        if (models.length) {
+            // const intersects = raycaster.intersectObject(scene.children, true);
+            console.log(intersects);
         }
-    })
-    const applyBtn = document.querySelector('#applyButton')
-    applyBtn.addEventListener('click', () => {
-        const position = JSON.parse(localStorage.getItem('position'))
-        console.log(position);
-        if (position) {
-            activeCube.position.x = position.x
-            activeCube.position.y = position.y
-            activeCube.position.z = position.z
-        } else {
-            alert('还没有保存过')
+        // 渲染页面
+        renderer.render(scene, camera);
+    };
+
+    function bindButtonEvent() {
+        const startButton = document.querySelector("#startButton");
+        const stopButton = document.querySelector("#stopButton");
+        const saveBtn = document.querySelector('#saveButton')
+        const applyBtn = document.querySelector('#applyButton')
+        startButton.addEventListener("click", () => {
+            start();
+        });
+        stopButton.addEventListener("click", () => {
+            mindarThree.stop();
+            mindarThree.renderer.setAnimationLoop(null);
+        });
+        saveBtn.addEventListener('click', () => {
+            if (activeModel) {
+                localStorage.setItem('position', JSON.stringify({
+                    x: activeModel.position.x,
+                    y: activeModel.position.y,
+                    z: activeModel.position.z
+                }))
+                alert('保存成功')
+            } else {
+                alert('未找到实体')
+            }
+        })
+        applyBtn.addEventListener('click', () => {
+            const position = JSON.parse(localStorage.getItem('position'))
+            console.log(position);
+            if (position) {
+                activeModel.position.x = position.x
+                activeModel.position.y = position.y
+                activeModel.position.z = position.z
+            } else {
+                alert('还没有保存过')
+            }
+        })
+
+    }
+
+
+    function initModelAnimation(gltf) {
+        // 创建一个AnimationMixer对象
+        const mixer = new THREE.AnimationMixer(gltf.scene);
+        mixers.push(mixer)
+
+        // 创建一个时钟
+        const clock = new THREE.Clock()
+        clocks.push(clock)
+
+        // 模型动画
+        const animations = gltf.animations;
+        // 将动画数据添加到AnimationMixer中
+        for (let i = 0; i < animations.length; i++) {
+            const animation = animations[i];
+            const action = mixer.clipAction(animation);
+            action.play(); // 播放动画
         }
-    })
+
+    }
+
+    function initModelStatus(model) {
+        // 初始化模型状态
+        model.position.set(-0.3, 0, 0);
+        model.rotation.set(0, 90, 90);
+        model.scale.set(0.005, 0.005, 0.005);
+
+        console.log(model);
+        // 给实体绑定拖拽功能
+        const controls = new DragControls([model], camera, renderer.domElement);
+        // controls.transformGroup = true
+        // 添加鼠标事件监听器
+        controls.addEventListener('dragstart', (e) => {
+            console.log('dragstart');
+        })
+        controls.addEventListener('drag', (e) => {
+            console.log('draging', e);
+        })
+    }
+
+    function loadGLTF() {
+        // 创建一个立方体
+        const anchor = mindarThree.addAnchor(0);
+
+        loader.load('https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/softmind/scene.gltf',
+            (gltf) => {
+                let model = gltf.scene
+                console.log('loaded', gltf);
+                initModelStatus(model)
+
+                initModelAnimation(gltf)
+
+                anchor.group.add(model);
+            })
+    }
 
     function onPointerMove(event) {
         pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
         pointer.y = - (event.clientY / window.innerHeight) * 2 + 1;
-        const delta = {
-            x: pointer.x - lastX,
-            y: pointer.y - lastY
-        };
-        const deltaPosition = new THREE.Vector3(delta.y, -delta.x, 0);
-        lastX = pointer.x
-        lastY = pointer.y
-        activeCube?.position.add(deltaPosition)
-        // console.log('pointer move', deltaPosition, delta);
     }
 
-    // window.addEventListener('pointermove', onPointerMove)
-
-    // var scene, camera, renderer;
-
-    function init() {
-        // 创建场景
-        // scene = new THREE.Scene();
-
-        // 创建相机
-        // camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.z = 5;
-
-        // 创建渲染器
-        // renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
-
-        // 创建一个立方体
-        addCube()
-
-        // 设置拖拽相关的变量
-        isDragging = false;
-        previousMousePosition = {
-            x: 0,
-            y: 0
-        };
-
-        // 添加鼠标事件监听器
-        document.addEventListener('mousedown', onMouseDown, false);
-        document.addEventListener('mousemove', onMouseMove, false);
-        document.addEventListener('mouseup', onMouseUp, false);
-
-        // 添加触摸事件监听器（可选）
-        // document.addEventListener('touchstart', onTouchStart, false);
-        // document.addEventListener('touchmove', onTouchMove, false);
-        // document.addEventListener('touchend', onTouchEnd, false);
-    }
-
-    function onMouseDown(event) {
-        event.preventDefault();
-        isDragging = true;
-        // previousMousePosition.x = event.clientX;
-        // previousMousePosition.y = event.clientY;
-
-    }
-
-    function onMouseMove(event) {
-        event.preventDefault();
-        if (isDragging) {
-            // const mouse = new THREE.Vector2();
-            // console.log(event.clientX, event.clientY);
-            // mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            // mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-            // const raycaster = new THREE.Raycaster();
-            // raycaster.setFromCamera(mouse, camera);
-
-            // const intersects = raycaster.intersectObjects(scene.children, true);
-            // if (intersects.length > 0) {
-            //     const intersectPoint = intersects[0].point;
-            //     const deltaMove = {
-            //         x: intersectPoint.x - previousMousePosition.x,
-            //         y: intersectPoint.y - previousMousePosition.y
-            //     };
-
-            //     if (activeCube) {
-            //         console.log(deltaMove);
-            //         activeCube.position.x += deltaMove.x;
-            //         activeCube.position.y += deltaMove.y;
-            //     }
-
-            //     previousMousePosition.x = intersectPoint.x;
-            //     previousMousePosition.y = intersectPoint.y;
-            // }
-            // var deltaMove = {
-            //     x: event.clientX - previousMousePosition.x,
-            //     y: event.clientY - previousMousePosition.y
-            // };
-
-            // if (activeCube) {
-            //     console.log(deltaMove);
-            //     activeCube.position.x += deltaMove.x * 0.01;
-            //     activeCube.position.y -= deltaMove.y * 0.01;
-            // }
-
-
-            // previousMousePosition.x = event.clientX;
-            // previousMousePosition.y = event.clientY;
-        }
-    }
-
-    function onMouseUp(event) {
-        event.preventDefault();
-        isDragging = false;
-    }
-
-    function addCube() {
-        // 创建一个立方体
-        const anchor = mindarThree.addAnchor(0);
-        const geometry = new THREE.PlaneGeometry(1, 0.55);
-        const material = new THREE.MeshBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.5 });
-        // let cube = new THREE.Mesh(geometry, material);
-        const controls = new DragControls([cube], camera, renderer.domElement);
-        controls.addEventListener('drag', () => {
-            activeCube = cube
-        });
-
-        // 设置立方体的初始位置
-        // cube.position.x = 0;
-        // cube.position.y = 0;
-        // anchor.group.add(cube);
-
-        loader.load('https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/softmind/scene.gltf',
-            (gltf) => {
-                cube = gltf.scene
-                console.log('loaded', cube);
-                const controls = new DragControls([cube], camera, renderer.domElement);
-                controls.addEventListener('drag', (e) => {
-
-                    // cube.position.set(e.object.position.x, e.object.position.y, e.object.position.z);
-                })
-                cube.position.set(0, 0, 0);
-                cube.rotation.set(0, 0, 0);
-                cube.scale.set(0.005, 0.005, 0.005);
-                anchor.group.add(cube);
-            })
-
-        document.addEventListener('touchstart', (event) => {
-            // activeCube = cube
-        }, false);
-        document.addEventListener('mouseenter', (event) => {
-            // console.log(cube);
-            // const mouse = new THREE.Vector2();
-            // mouse.x = cube.position.x
-            // mouse.y = cube.position.y
-            // activeCube = cube
-
-
-            // const raycaster = new THREE.Raycaster();
-            // raycaster.setFromCamera(mouse, camera);
-
-            // const intersects = raycaster.intersectObject(cube);
-            // if (intersects.length > 0) {
-            //     console.log('drag', cube);
-
-            //     console.log('Cube clicked!');
-            // }
-        }, false);
-
-
-    }
-
-
-
+    bindButtonEvent()
 </script>
 
 </html>
