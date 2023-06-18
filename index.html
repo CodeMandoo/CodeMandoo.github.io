@@ -28,12 +28,36 @@
             position: fixed;
             top: 0;
             left: 0;
-            z-index: 2;
+            z-index: 100;
         }
 
         button {
-            width: 100px;
-            height: 32px;
+            position: relative;
+            min-width: 100px;
+            height: 40px;
+            z-index: 100;
+        }
+
+        .model-menu {
+            position: fixed;
+            bottom: 0;
+            width: calc(100% - 20px);
+            height: 160px;
+            padding: 10px;
+            z-index: 100;
+            background-color: #fff;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .model-menu img {
+            height: 100px;
+        }
+
+        .menu-switch {
+            font-size: 20px;
+            height: 20px;
+            text-align: center;
+            color: #006ce6;
         }
     </style>
 </head>
@@ -41,14 +65,17 @@
 <body>
     <div id="control">
         <button id="startButton">Start</button>
-        <button id="stopButton">Stop</button>
-        <button id="addButton">Add Cube</button>
-        <button id="saveButton">save</button>
-        <button id="applyButton">apply</button>
+        <!-- <button id="stopButton">Stop</button> -->
+        <button id="saveButton">保存</button>
+        <button id="applyButton">加载保存的配置</button>
+        <button id="clearButton">清空缓存</button>
     </div>
     <div id="container">
     </div>
-
+    <div class="model-menu">
+        <div class="menu-switch">打开</div>
+        <div>点击下方图片添加模型</div>
+    </div>
 </body>
 <script type="module">
     import * as THREE from 'three';
@@ -83,10 +110,13 @@
     // 鼠标位置
     const pointer = new THREE.Vector2()
 
+    let config = []
+
     const start = async () => {
         await mindarThree.start();
         init();
         animate()
+        renderModelImgList()
     }
 
     function init() {
@@ -94,9 +124,6 @@
         document.body.appendChild(renderer.domElement);
 
         window.addEventListener('mousemove', onPointerMove)
-
-        // 创建一个立方体
-        loadGLTF()
     }
 
     // 渲染
@@ -122,42 +149,91 @@
 
     function bindButtonEvent() {
         const startButton = document.querySelector("#startButton");
-        const stopButton = document.querySelector("#stopButton");
+        // const stopButton = document.querySelector("#stopButton");
         const saveBtn = document.querySelector('#saveButton')
         const applyBtn = document.querySelector('#applyButton')
+        const clearButton = document.querySelector('#clearButton')
         startButton.addEventListener("click", () => {
             start();
         });
-        stopButton.addEventListener("click", () => {
-            mindarThree.stop();
-            mindarThree.renderer.setAnimationLoop(null);
-        });
+        // stopButton.addEventListener("click", () => {
+        //     mindarThree.stop();
+        //     mindarThree.renderer.setAnimationLoop(null);
+        // });
         saveBtn.addEventListener('click', () => {
-            if (activeModel) {
-                localStorage.setItem('position', JSON.stringify({
-                    x: activeModel.position.x,
-                    y: activeModel.position.y,
-                    z: activeModel.position.z
-                }))
-                alert('保存成功')
-            } else {
-                alert('未找到实体')
+            if (!config.length) {
+                alert('请先添加模型')
             }
+            localStorage.setItem('modelInfo', JSON.stringify(config))
+            console.log(config);
+            // alert('保存成功')
         })
         applyBtn.addEventListener('click', () => {
-            const position = JSON.parse(localStorage.getItem('position'))
-            console.log(position);
-            if (position) {
-                activeModel.position.x = position.x
-                activeModel.position.y = position.y
-                activeModel.position.z = position.z
-            } else {
-                alert('还没有保存过')
-            }
+            renderSaveModel()
+        })
+        clearButton.addEventListener('click', () => {
+            localStorage.clear()
         })
 
     }
 
+    function renderModelImgList() {
+        const models = [
+            {
+                name: 'mind',
+                img: './assets/mind.png',
+                gltf: 'https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/softmind/scene.gltf'
+            },
+            {
+                name: 'bear',
+                img: './assets/bear.png',
+                gltf: 'https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/softmind/scene.gltf'
+            },
+            {
+                name: 'raccoon',
+                img: './assets/raccoon.png',
+                gltf: 'https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/softmind/scene.gltf'
+            }
+        ]
+        const modelImgWrap = document.querySelector('.model-menu')
+        models.forEach(model => {
+            const img = document.createElement('img')
+            img.src = model.img
+            img.addEventListener('click', () => {
+                loadGLTF(model.gltf).then(res => {
+                    const modelConfig = Object.assign({}, model)
+                    config.push(modelConfig)
+                    res.controls.addEventListener('drag', (e) => {
+                        console.log('drag', e, e.object, activeModel);
+                        modelConfig.position = e.object.position
+                    })
+                })
+            })
+            modelImgWrap.appendChild(img)
+        })
+    }
+
+    function renderSaveModel() {
+        const modelInfo = localStorage.getItem('modelInfo')
+        if (!modelInfo) {
+            alert('还没有保存过')
+            return
+        }
+        console.log(modelInfo, JSON.parse(modelInfo));
+        config = JSON.parse(modelInfo)
+        config.forEach((info) => {
+            loadGLTF(info.gltf, {
+                position: info.position
+            }).then(res => {
+                console.log(res.model);
+                res.controls.addEventListener('drag', (e) => {
+                    console.log('drag', e.object, res.model);
+                    info.position = e.object.position
+                })
+            })
+        })
+        console.log('加载完成');
+    }
 
     function initModelAnimation(gltf) {
         // 创建一个AnimationMixer对象
@@ -179,39 +255,53 @@
 
     }
 
-    function initModelStatus(model) {
+    function initModelStatus(model, config) {
+        let x = 0, y = 0, z = 0
+        if (config.position) {
+            // x = config.position.x
+            // y = config.position.y
+            // z = config.position.z
+        }
+        console.log(x, y, z);
         // 初始化模型状态
-        model.position.set(-0.3, 0, 0);
-        model.rotation.set(0, 90, 90);
-        model.scale.set(0.005, 0.005, 0.005);
+        model.position.set(x, y, z);
+        model.rotation.set(0, 0, 0);
+        model.scale.set(0.01, 0.01, 0.01);
 
         console.log(model);
-        // 给实体绑定拖拽功能
-        const controls = new DragControls([model], camera, renderer.domElement);
-        // controls.transformGroup = true
-        // 添加鼠标事件监听器
-        controls.addEventListener('dragstart', (e) => {
-            console.log('dragstart');
-        })
-        controls.addEventListener('drag', (e) => {
-            console.log('draging', e);
-        })
+
     }
 
-    function loadGLTF() {
-        // 创建一个立方体
+
+    function loadGLTF(src, config = {}) {
         const anchor = mindarThree.addAnchor(0);
 
-        loader.load('https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/softmind/scene.gltf',
-            (gltf) => {
-                let model = gltf.scene
-                console.log('loaded', gltf);
-                initModelStatus(model)
+        return new Promise((resolve) => {
+            loader.load(src,
+                (gltf) => {
+                    let model = gltf.scene
+                    console.log('loaded', gltf);
 
-                initModelAnimation(gltf)
+                    initModelStatus(model, config)
 
-                anchor.group.add(model);
-            })
+                    initModelAnimation(gltf)
+
+                    const controls = new DragControls([model], camera, renderer.domElement);
+
+                    controls.addEventListener('dragstart', (e) => {
+                        // activeModel = gltf.scene
+                    })
+
+                    anchor.group.add(model);
+
+                    resolve({
+                        controls,
+                        model
+                    })
+                })
+        })
+
+
     }
 
     function onPointerMove(event) {
