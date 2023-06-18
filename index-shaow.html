@@ -33,8 +33,9 @@
 
         button {
             position: relative;
+            min-width: 100px;
+            height: 40px;
             z-index: 100;
-            height: 32px;
         }
 
         .model-menu {
@@ -63,6 +64,8 @@
 
 <body>
     <div id="control">
+        <button id="startButton">Start</button>
+        <!-- <button id="stopButton">Stop</button> -->
         <button id="saveButton">保存</button>
         <button id="applyButton">加载保存的配置</button>
         <button id="clearButton">清空缓存</button>
@@ -86,7 +89,11 @@
     });
     const { renderer, scene, camera } = mindarThree;
 
+    // 创建环境光
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    // 创建平行光
+    // const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    // directionalLight.position.set(1, 1, 1);
     scene.add(ambientLight);
 
     // 每个实体的动画混合器集合
@@ -98,32 +105,61 @@
     // 当前拖拽模型
     let activeModel = null
 
+    // 射线
     const raycaster = new THREE.Raycaster()
+    // 鼠标位置
     const pointer = new THREE.Vector2()
 
     let config = []
 
-    console.log(mindarThree);
     const start = async () => {
         await mindarThree.start();
         init();
+        animate()
         renderModelImgList()
-        // loadGLTF()
-        renderer.setAnimationLoop(() => {
-            // raycaster.setFromCamera(pointer, camera);
-            const intersects = raycaster.intersectObjects(scene.children);
-            if (intersects.length > 0) {
-                // console.log(intersects[0]);
-                // activeCube.position.copy(intersects[0].point)
-            }
-            renderer.render(scene, camera);
-        });
     }
 
+    function init() {
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        window.addEventListener('mousemove', onPointerMove)
+    }
+
+    // 渲染
+    function animate() {
+        requestAnimationFrame(animate)
+        // 可使用renderer.setAnimationLoop
+        // 更新每个实体的动画混合器
+        mixers.forEach((mixer, index) => {
+            // 获取对应实体时钟
+            const clock = clocks[index]
+            const delta = clock.getDelta()
+            mixer.update(delta)
+        })
+        // 设置射线位置和方向
+        // raycaster.setFromCamera(pointer, camera);
+        if (models.length) {
+            // const intersects = raycaster.intersectObject(scene.children, true);
+            // console.log(intersects);
+        }
+        // 渲染页面
+        renderer.render(scene, camera);
+    };
+
     function bindButtonEvent() {
+        const startButton = document.querySelector("#startButton");
+        // const stopButton = document.querySelector("#stopButton");
         const saveBtn = document.querySelector('#saveButton')
         const applyBtn = document.querySelector('#applyButton')
         const clearButton = document.querySelector('#clearButton')
+        startButton.addEventListener("click", () => {
+            start();
+        });
+        // stopButton.addEventListener("click", () => {
+        //     mindarThree.stop();
+        //     mindarThree.renderer.setAnimationLoop(null);
+        // });
         saveBtn.addEventListener('click', () => {
             if (!config.length) {
                 alert('请先添加模型')
@@ -146,38 +182,17 @@
             {
                 name: 'mind',
                 img: './assets/mind.png',
-                gltf: 'https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/softmind/scene.gltf',
-                config: {
-                    scale: {
-                        x: 0.005,
-                        y: 0.005,
-                        z: 0.005,
-                    }
-                }
+                gltf: 'https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/softmind/scene.gltf'
             },
             {
                 name: 'bear',
                 img: './assets/bear.png',
-                gltf: 'https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/band-example/bear/scene.gltf',
-                config: {
-                    scale: {
-                        x: 0.05,
-                        y: 0.05,
-                        z: 0.05,
-                    }
-                }
+                gltf: 'https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/band-example/bear/scene.gltf'
             },
             {
                 name: 'raccoon',
                 img: './assets/raccoon.png',
-                gltf: 'https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/band-example/raccoon/scene.gltf',
-                config: {
-                    scale: {
-                        x: 0.05,
-                        y: 0.05,
-                        z: 0.05,
-                    }
-                }
+                gltf: 'https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/band-example/raccoon/scene.gltf'
             }
         ]
         const modelImgWrap = document.querySelector('.model-menu')
@@ -185,12 +200,13 @@
             const img = document.createElement('img')
             img.src = model.img
             img.addEventListener('click', () => {
-                loadGLTF(model.gltf, model.config).then((res) => {
+                loadGLTF(model.gltf).then(res => {
                     const modelConfig = Object.assign({}, model)
                     config.push(modelConfig)
-                    res.controls.addEventListener('drag', () => {
-                        modelConfig.config.position = res.model.position
-                    })
+                    // res.controls.addEventListener('drag', (e) => {
+                    //     console.log('drag', e, e.object, activeModel);
+                    //     modelConfig.position = e.object.position
+                    // })
                 })
             })
             modelImgWrap.appendChild(img)
@@ -205,60 +221,79 @@
         }
         console.log(modelInfo, JSON.parse(modelInfo));
         config = JSON.parse(modelInfo)
-        console.log(config);
         config.forEach((info) => {
-            loadGLTF(info.gltf, info.config).then(res => {
+            loadGLTF(info.gltf, {
+                position: info.position
+            }).then(res => {
+                console.log(res.model);
                 res.controls.addEventListener('drag', (e) => {
                     console.log('drag', e.object, res.model);
-                    info.config.position = e.object.position
+                    info.position = e.object.position
                 })
             })
         })
         console.log('加载完成');
     }
 
-    function init() {
-        camera.position.z = 5;
+    function initModelAnimation(gltf) {
+        // 创建一个AnimationMixer对象
+        const mixer = new THREE.AnimationMixer(gltf.scene);
+        mixers.push(mixer)
 
-        // 创建渲染器
-        // renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+        // 创建一个时钟
+        const clock = new THREE.Clock()
+        clocks.push(clock)
+
+        // 模型动画
+        const animations = gltf.animations;
+        // 将动画数据添加到AnimationMixer中
+        for (let i = 0; i < animations.length; i++) {
+            const animation = animations[i];
+            const action = mixer.clipAction(animation);
+            action.play(); // 播放动画
+        }
+
     }
 
+    function initModelStatus(model, config) {
+        let x = 0, y = 0, z = 0
+        if (config.position) {
+            // x = config.position.x
+            // y = config.position.y
+            // z = config.position.z
+        }
+        console.log(x, y, z);
+        // 初始化模型状态
+        model.position.set(x, y, z);
+        model.rotation.set(0, 0, 0);
+        model.scale.set(0.01, 0.01, 0.01);
+
+        console.log(model);
+
+    }
+
+
     function loadGLTF(src, config = {}) {
-        // 创建一个立方体
-        const anchor = mindarThree.addAnchor(0);
+
 
         return new Promise((resolve) => {
             loader.load(src,
                 (gltf) => {
-                    const cube = gltf.scene
-                    console.log(gltf);
-                    console.log(config);
+                    const anchor = mindarThree.addAnchor(0);
+                    let model = gltf.scene
+                    console.log('loaded', gltf);
 
-                    // 设置立方体的初始位置
-                    let x = 0, y = 0, z = 0
-                    if (config.position) {
-                        x = config.position.x
-                        y = config.position.y
-                        z = config.position.z
-                    }
-                    // 初始化模型状态
-                    cube.position.set(x, y, z);
+                    model.position.set(0, 0, 0);
+                    model.rotation.set(0, 0, 0);
+                    model.scale.set(0.01, 0.01, 0.01);
 
-                    let scaleX = 1, scaleY = 1, scaleZ = 1
-                    if (config.scale) {
-                        scaleX = config.scale.x
-                        scaleY = config.scale.y
-                        scaleZ = config.scale.z
-                    }
-                    console.log(scaleX, scaleX, scaleX);
-                    cube.scale.set(scaleX, scaleX, scaleX);
+                    // initModelAnimation(gltf)
 
 
+
+                    const boxAnchor = mindarThree.addAnchor(0);
                     // 计算原始实体的包围盒
-                    const boundingBox = new THREE.Box3().setFromObject(cube);
+                    const boundingBox = new THREE.Box3().setFromObject(model);
                     const size = new THREE.Vector3();
                     boundingBox.getSize(size);
 
@@ -267,38 +302,40 @@
 
                     // 创建一个与原始实体大小相似的新实体
                     const newCubeGeometry = new THREE.BoxGeometry(size.x, size.y, size.z);
-                    const newCubeMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0.3 });
+                    const newCubeMaterial = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 });
                     const box = new THREE.Mesh(newCubeGeometry, newCubeMaterial);
 
                     const controls = new DragControls([box], camera, renderer.domElement);
                     controls.addEventListener('drag', (e) => {
-                        cube.position.set(box.position.x, box.position.y - offset, box.position.z)
-                        activeModel = cube
+                        console.log(box.position);
+                        model.position.set(box.position.x, box.position.y - offset, box.position.z)
+                        activeModel = model
                     });
                     // 设置包围盒的位置和旋转，与模型保持一致
-                    box.position.copy(cube.position);
-                    box.rotation.copy(cube.rotation);
+                    box.position.copy(model.position);
+                    box.rotation.copy(model.rotation);
                     box.position.y += offset
+                    boxAnchor.group.add(box);
+                    anchor.group.add(model);
 
-                    anchor.group.add(cube);
-                    anchor.group.add(box);
                     resolve({
-                        model: cube,
-                        controls
+                        controls,
+                        model
                     })
+
 
                 })
         })
 
 
+    }
 
-
+    function onPointerMove(event) {
+        pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+        pointer.y = - (event.clientY / window.innerHeight) * 2 + 1;
     }
 
     bindButtonEvent()
-
-    start();
-
 </script>
 
 </html>
