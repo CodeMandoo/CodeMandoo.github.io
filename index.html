@@ -38,6 +38,7 @@
         }
 
         .model-menu {
+            display: none;
             position: fixed;
             bottom: 0;
             width: calc(100% - 20px);
@@ -49,14 +50,19 @@
         }
 
         .model-menu img {
+            width: 100px;
             height: 100px;
         }
 
-        .menu-switch {
+        .menu-close {
+            position: absolute;
+            right: 10px;
+            top: 10px;
             font-size: 20px;
             height: 20px;
             text-align: center;
             color: #006ce6;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -66,11 +72,13 @@
         <button id="saveButton">保存</button>
         <button id="applyButton">加载保存的配置</button>
         <button id="clearButton">清空缓存</button>
+        <button id="menuButton">打开菜单</button>
     </div>
     <div id="container">
     </div>
+    <div class="menu-open">打开列表</div>
     <div class="model-menu">
-        <div class="menu-switch">打开</div>
+        <div class="menu-close">关闭</div>
         <div>点击下方图片添加模型</div>
     </div>
 </body>
@@ -124,6 +132,9 @@
         const saveBtn = document.querySelector('#saveButton')
         const applyBtn = document.querySelector('#applyButton')
         const clearButton = document.querySelector('#clearButton')
+        const menuButton = document.querySelector('#menuButton')
+        const closeButton = document.querySelector('.menu-close')
+
         saveBtn.addEventListener('click', () => {
             if (!config.length) {
                 alert('请先添加模型')
@@ -137,6 +148,13 @@
         })
         clearButton.addEventListener('click', () => {
             localStorage.clear()
+        })
+        closeButton.addEventListener('click', () => {
+            document.querySelector('.model-menu').style.display = 'none'
+        })
+
+        menuButton.addEventListener('click', () => {
+            document.querySelector('.model-menu').style.display = 'block'
         })
 
     }
