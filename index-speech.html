@@ -100,21 +100,16 @@
 
     // socket.send('zou')
 
-    var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
+    var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     var SpeechGrammarList = SpeechGrammarList || window.webkitSpeechGrammarList
     var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent
 
-    const grammar =
-        "#JSGF V1.0; grammar colors; public <color> = 跑 | 走";
-
-    const recognition = new SpeechRecognition();
-
     // const speechRecognitionList = new SpeechGrammarList();
     // speechRecognitionList.addFromString(grammar, 1);
-
+    recognition = new SpeechRecognition()
     // recognition.grammars = speechRecognitionList;
-    // recognition.continuous = true;
-    // recognition.lang = window.navigator.language;
+    recognition.continuous = true;
+    recognition.lang = 'cmn-Hans-CN';
     // 要不要临时返回识别结果
     // recognition.interimResults = true;
     // 每次返回可能匹配的数量
@@ -122,10 +117,9 @@
 
     recognition.onresult = function (event) {
         var last = event.results.length - 1;
-        var color = event.results[last][0].transcript;
-        document.querySelector('.speech-listener__text').innerText = event.results[0][0].transcript
+        var text = event.results[last][0].transcript;
+        document.querySelector('.speech-listener__text').innerText = text
         console.log(event);
-        console.log(event.results[0][0].transcript);
     }
 
     function startSpeech() {

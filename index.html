@@ -271,7 +271,7 @@
                         scaleZ = config.scale.z
                     }
                     console.log(scaleX, scaleX, scaleX);
-                    cube.scale.set(scaleX, scaleX, scaleX);
+                    cube.scale.set(scaleX, scaleY, scaleZ);
 
 
                     // 计算原始实体的包围盒
@@ -280,11 +280,12 @@
                     boundingBox.getSize(size);
 
                     // 计算偏移量，即初始包围盒高度的50%
-                    const offset = size.y * 0.5;
+                    // const offset = size.y * 0.5;
+                    const offset = 0.3
 
                     // 创建一个与原始实体大小相似的新实体
-                    const newCubeGeometry = new THREE.BoxGeometry(size.x, size.y, size.z);
-                    const newCubeMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0.3 });
+                    const newCubeGeometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
+                    const newCubeMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0.1 });
                     const box = new THREE.Mesh(newCubeGeometry, newCubeMaterial);
 
                     const controls = new DragControls([box], camera, renderer.domElement);
