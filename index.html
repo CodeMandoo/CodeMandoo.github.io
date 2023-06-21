@@ -116,15 +116,25 @@
         init();
         renderModelImgList()
         // loadGLTF()
-        renderer.setAnimationLoop(() => {
-            // raycaster.setFromCamera(pointer, camera);
-            const intersects = raycaster.intersectObjects(scene.children);
-            if (intersects.length > 0) {
-                // console.log(intersects[0]);
-                // activeCube.position.copy(intersects[0].point)
-            }
-            renderer.render(scene, camera);
-        });
+        animate()
+    }
+
+    function animate() {
+        requestAnimationFrame(animate)
+        // 更新每个实体的动画混合器
+        mixers.forEach((mixer, index) => {
+            // 获取对应实体时钟
+            const clock = clocks[index]
+            const delta = clock.getDelta()
+            mixer.update(delta)
+        })
+        // raycaster.setFromCamera(pointer, camera);
+        const intersects = raycaster.intersectObjects(scene.children);
+        if (intersects.length > 0) {
+            // console.log(intersects[0]);
+            // activeCube.position.copy(intersects[0].point)
+        }
+        renderer.render(scene, camera);
     }
 
     function bindButtonEvent() {
@@ -272,6 +282,23 @@
                     }
                     console.log(scaleX, scaleX, scaleX);
                     cube.scale.set(scaleX, scaleY, scaleZ);
+
+                    // 创建一个AnimationMixer对象
+                    const mixer = new THREE.AnimationMixer(cube);
+                    mixers.push(mixer)
+
+                    // 创建一个时钟
+                    const clock = new THREE.Clock()
+                    clocks.push(clock)
+
+                    // 模型动画
+                    const animations = gltf.animations;
+                    // 将动画数据添加到AnimationMixer中
+                    for (let i = 0; i < animations.length; i++) {
+                        const animation = animations[i];
+                        const action = mixer.clipAction(animation);
+                        action.play(); // 播放动画
+                    }
 
 
                     // 计算原始实体的包围盒
