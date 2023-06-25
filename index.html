@@ -253,6 +253,7 @@
         document.body.appendChild(renderer.domElement);
     }
 
+
     function loadGLTF(src, config = {}) {
         // 创建一个立方体
         const anchor = mindarThree.addAnchor(0);
@@ -316,6 +317,7 @@
                     const box = new THREE.Mesh(newCubeGeometry, newCubeMaterial);
 
                     const controls = new DragControls([box], camera, renderer.domElement);
+
                     controls.addEventListener('drag', (e) => {
                         cube.position.set(box.position.x, box.position.y - offset, box.position.z)
                         activeModel = cube

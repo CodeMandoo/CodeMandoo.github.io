@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>测试 demo</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <div class="content-box">
+        <div class="content">
+            <div class="content-item left-content">
+                <button class="button" id="start">开始识别</button>
+                <div class="connecting display-none" id="connecting">建立连接中...</div>
+                <span class="recognizing display-none" id="recognizing">识别中...</span>
+                <button class="button end-btn" id="end">结束识别</button>
+            </div>
+            <div class="content-item">
+                <div id="recognizeText" class="recognize-content"></div>
+            </div>
+        </div>
+    </div>
+    <script src="./tencentcloud-speech-sdk-js/examples/lib/jquery.js"></script>
+    <script src="./tencentcloud-speech-sdk-js/dist/speechrecognizer.js"></script>
+    <script src="./tencentcloud-speech-sdk-js/examples/config.js"></script>
+    <script src="./tencentcloud-speech-sdk-js/examples/asrauthentication.js"></script>
+    <script type="module" src="./tencentcloud-speech-sdk-js/examples/index.js"></script>
+</body>
+
+</html>
