@@ -1,7 +1,7 @@
 let webAudioSpeechRecognizer;
 let isCanStop;
 
-const socket = new WebSocket('ws://192.168.123.47:7005')
+const socket = new WebSocket('wss://192.168.123.47:7005')
 
 // Connection opened
 socket.addEventListener('open', function (event) {
