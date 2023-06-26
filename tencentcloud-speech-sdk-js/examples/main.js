@@ -7,7 +7,7 @@ const socket = new WebSocket('ws://192.168.123.47:7005')
 
 // Connection opened
 socket.addEventListener('open', function (event) {
-  console.log('open');
+  alert('socket 连接成功！')
   socket.send('Hello Server!');
 });
 
