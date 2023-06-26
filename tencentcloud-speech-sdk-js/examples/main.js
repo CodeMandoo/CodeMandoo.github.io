@@ -3,16 +3,6 @@ let speechRecognizer;
 let isCanSendData = false;
 let isCanStop;
 
-const socket = new WebSocket('ws://192.168.123.47:7005')
-
-// Connection opened
-socket.addEventListener('open', function (event) {
-  alert('socket 连接成功！')
-  socket.send('Hello Server!');
-});
-
-const commands = ['跑', '走', '跳','起立', '蹲下', '左转圈', '右转圈', '跳跃偏航', '前进', '后退', '拜年', '跳舞', '摇摆']
-
 $(function () {
     const params = {
         signCallback: signCallback, // 鉴权函数 用户提供鉴权函数，不传则为null
@@ -81,10 +71,6 @@ $(function () {
       // 一句话结束
       speechRecognizer.OnSentenceEnd = (res) => {
         console.log('一句话结束', res);
-        const recognizeText = res.result.voice_text_str
-        if(commands.includes(recognizeText)){
-          socket.send(recognizeText)
-        }
         resultText += res.result.voice_text_str;
         areaDom.text(resultText);
       };
