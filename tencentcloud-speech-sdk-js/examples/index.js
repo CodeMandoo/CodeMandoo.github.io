@@ -1,15 +1,14 @@
 let webAudioSpeechRecognizer;
 let isCanStop;
 
-const socket = new WebSocket('wss://192.168.123.47:7005')
+const socket = new WebSocket('ws://192.168.123.47:7006')
 
 // Connection opened
 socket.addEventListener('open', function (event) {
-  alert('socket 连接成功！')
   socket.send('Hello Server!');
 });
 
-const commands = ['跑', '走', '跳','起立', '蹲下', '左转圈', '右转圈', '跳跃偏航', '前进', '后退', '拜年', '跳舞', '摇摆']
+const commands = ['跑', '走', '跳','调头','站起来','左转','右转', '蹲下', '正向转圈', '反向转圈','左侧走', '右侧走', '前进', '后退','停止','跳跃', '拜年', '跳舞', '摇摆']
 
 $(function () {
   const params = {
@@ -57,11 +56,13 @@ $(function () {
     // 一句话结束
     webAudioSpeechRecognizer.OnSentenceEnd = (res) => {
       console.log('一句话结束', res);
-      const recognizeText = res.result.voice_text_str
-        if(commands.includes(recognizeText)){
-          socket.send(recognizeText)
-        }
       resultText += res.result.voice_text_str;
+      const recognizeText = res.result.voice_text_str
+      const command = recognizeText.slice(0 ,recognizeText.length-1)
+      if(commands.includes(command)){
+          $('#command').text(command)
+          socket.send(command)
+        }
       areaDom.text(resultText);
     };
     // 识别结束
