@@ -12,14 +12,19 @@
 <body>
     <div class="content-box">
         <div class="content">
+            
+            <div class="content-item">
+                <div id="recognizeText" class="recognize-content"></div>
+            </div>
+            <div class="content-item">
+                <div>当前识别命令:</div>
+                <div id="command" class="recognize-content" style="height: 42px;"></div>
+            </div>
             <div class="content-item left-content">
                 <button class="button" id="start">开始识别</button>
                 <div class="connecting display-none" id="connecting">建立连接中...</div>
                 <span class="recognizing display-none" id="recognizing">识别中...</span>
                 <button class="button end-btn" id="end">结束识别</button>
-            </div>
-            <div class="content-item">
-                <div id="recognizeText" class="recognize-content"></div>
             </div>
         </div>
     </div>
