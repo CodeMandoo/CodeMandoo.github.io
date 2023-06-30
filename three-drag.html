@@ -1,0 +1,245 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script async src="https://unpkg.com/es-module-shims@1.7.3/dist/es-module-shims.js"></script>
+    <script type="importmap">
+    {
+      "imports": {
+	"three": "https://unpkg.com/three@0.153.0/build/three.module.js",
+	"three/addons/": "https://unpkg.com/three@0.153.0/examples/jsm/",
+	"mindar-image-three":"https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-three.prod.js"
+      }
+    }
+    </script>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #control {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        button {
+            position: relative;
+            z-index: 100;
+            height: 32px;
+        }
+
+        .model-menu {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            width: calc(100% - 20px);
+            height: 160px;
+            padding: 10px;
+            z-index: 100;
+            background-color: #fff;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .model-menu img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .menu-close {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            font-size: 20px;
+            height: 20px;
+            text-align: center;
+            color: #006ce6;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="control">
+        <button id="saveButton">保存</button>
+        <button id="applyButton">加载保存的配置</button>
+        <button id="clearButton">清空缓存</button>
+        <button id="menuButton">打开菜单</button>
+    </div>
+    <div id="container">
+    </div>
+    <div class="model-menu">
+        <div class="menu-close">关闭</div>
+        <div>点击下方图片添加模型</div>
+    </div>
+</body>
+<script type="module">
+    import * as THREE from 'three';
+    import { MindARThree } from 'mindar-image-three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { DragControls } from 'three/addons/controls/DragControls.js';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    const loader = new GLTFLoader()
+    const mindarThree = new MindARThree({
+        container: document.querySelector("#container"),
+        imageTargetSrc: "./assets/mind/targets.mind"
+    });
+    const { renderer, scene, camera } = mindarThree;
+
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+
+    let gltfModel
+
+    // 创建控制器
+    const controls = new OrbitControls(camera, renderer.domElement);
+
+    const start = async () => {
+        await mindarThree.start();
+        init();
+        animate()
+    }
+
+    start()
+
+    function init() {
+        // 创建场景
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // 加载GLTF模型
+        loader.load('https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/softmind/scene.gltf', function (gltf) {
+            const anchor = mindarThree.addAnchor(0)
+            const group = new THREE.Group();
+
+            gltfModel = gltf.scene;
+            group.add(gltfModel)
+            group.position.set(0, 0, 0);
+            group.scale.set(0.005, 0.005, 0.005);
+            anchor.group.add(group);
+
+            // 添加拖动事件监听器
+            group.addEventListener('drag', function (event) {
+                // 处理拖动事件
+                var object = event.target;
+                // 在这里可以更新模型的位置、旋转或其他属性
+            });
+
+            // 监听鼠标事件，实现拖动
+            document.addEventListener('mousedown', onDocumentMouseDown, false);
+            document.addEventListener('mouseup', onDocumentMouseUp, false);
+            document.addEventListener('mousemove', onDocumentMouseMove, false);
+        });
+        loader.load('./assets/gltf/Soldier.glb', function (gltf) {
+            const anchor = mindarThree.addAnchor(0)
+            const group = new THREE.Group();
+            gltfModel = gltf.scene;
+            group.add(gltfModel)
+            group.position.set(1, 0, 0);
+            group.scale.set(0.5, 0.5, 0.5);
+            anchor.group.add(group);
+
+            // 添加拖动事件监听器
+            group.addEventListener('drag', function (event) {
+                // 处理拖动事件
+                var object = event.target;
+                // 在这里可以更新模型的位置、旋转或其他属性
+            });
+
+            // 监听鼠标事件，实现拖动
+            document.addEventListener('mousedown', onDocumentMouseDown, false);
+            document.addEventListener('mouseup', onDocumentMouseUp, false);
+            document.addEventListener('mousemove', onDocumentMouseMove, false);
+        });
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+        controls.update();
+    }
+
+    // 鼠标事件处理函数
+    var raycaster = new THREE.Raycaster();
+    var mouse = new THREE.Vector2();
+    var selectedObject = null;
+    var dragOffset = new THREE.Vector3();
+
+    // 获取模型在窗口中的位置
+    function getModelPositionInWindow(model) {
+        // 创建一个向量，表示模型的世界坐标
+        var modelWorldPosition = new THREE.Vector3();
+        model.getWorldPosition(modelWorldPosition);
+
+        // 将模型的世界坐标转换为屏幕坐标
+        var screenPosition = modelWorldPosition.clone();
+        screenPosition.project(camera);
+
+        // 将屏幕坐标转换为窗口坐标
+        var windowPosition = new THREE.Vector2();
+        windowPosition.x = (screenPosition.x + 1) * window.innerWidth / 2;
+        windowPosition.y = (-screenPosition.y + 1) * window.innerHeight / 2;
+
+        return windowPosition;
+    }
+
+    function onDocumentMouseDown(event) {
+        event.preventDefault();
+
+        // 计算鼠标位置在屏幕上的归一化坐标
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        // 通过射线检测鼠标位置与模型的相交情况
+        raycaster.setFromCamera(mouse, camera);
+        var intersects = raycaster.intersectObjects(scene.children, true);
+        console.log(intersects);
+        if (intersects.length > 0) {
+            // 选中第一个相交的模型
+            // const group = new THREE.Group();
+            selectedObject = intersects[0].object;
+            console.log(selectedObject);
+            dragOffset.copy(intersects[0].point).sub(selectedObject.position);
+        }
+    }
+
+    function onDocumentMouseUp(event) {
+        event.preventDefault();
+
+        selectedObject = null;
+    }
+
+    function onDocumentMouseMove(event) {
+        event.preventDefault();
+
+        if (selectedObject) {
+            // 计算鼠标位置在屏幕上的归一化坐标
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            // 通过射线检测鼠标位置与平面的相交情况
+            raycaster.setFromCamera(mouse, camera);
+            var intersects = raycaster.intersectObject(scene, true);
+            console.log(intersects);
+            if (intersects.length > 0) {
+                console.log('change');
+                // 更新模型的位置
+                selectedObject.position.copy(intersects[0].point.sub(dragOffset));
+                selectedObject.position.x = mouse.x
+                selectedObject.position.y = mouse.y
+            }
+        }
+    }
+
+</script>
+
+</html>
