@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>实时获取音频流</title>
+</head>
+
+<body>
+    <button onclick="startRecording()">开始录制</button>
+    <button onclick="stopRecording()">停止录制</button>
+
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+
+        // 获取音频流
+        async function getAudioStream() {
+            try {
+                const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                return mediaStream;
+            } catch (error) {
+                console.error("获取音频流失败：", error);
+            }
+        }
+
+        // 开始录制音频
+        async function startRecording() {
+            const mediaStream = await getAudioStream();
+            if (mediaStream) {
+                mediaRecorder = new MediaRecorder(mediaStream);
+                mediaRecorder.ondataavailable = handleAudioChunk;
+                mediaRecorder.start(1000);
+            }
+        }
+
+        // 处理音频数据块
+        function handleAudioChunk(event) {
+            if (event.data.size > 0) {
+                console.log(event.data);
+                audioChunks.push(event.data);
+            }
+        }
+
+        // 停止录制音频并播放录制的音频
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    const audioElement = new Audio(audioUrl);
+                    audioElement.controls = true;
+                    document.body.appendChild(audioElement);
+                };
+            }
+        }
+    </script>
+</body>
+
+</html>

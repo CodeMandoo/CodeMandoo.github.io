@@ -5,12 +5,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="https://unpkg.com/vconsole@3.15.1/dist/vconsole.min.js"></script>
 </head>
+<style>
+    body {
+        margin: 0;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    .speech-listener {
+        width: 100%;
+        height: 100%;
+    }
+
+    .speech-listener__result {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 400px;
+        width: 80%;
+        line-height: 32px;
+        text-align: center;
+    }
+
+    .speech-listener__text {
+        width: 100%;
+        background: #eee;
+        text-align: left;
+        padding: 0 10px;
+        min-height: 32px;
+        max-height: 200px;
+        overflow: auto;
+    }
+
+    .speech-listener__start,
+    .speech-listener__stop {
+        position: absolute;
+        left: 50%;
+        bottom: 100px;
+        transform: translateX(-50%);
+        width: 200px;
+        height: 200px;
+        line-height: 200px;
+        border-radius: 50%;
+        background-color: #006ce2;
+        text-align: center;
+        font-size: 24px;
+        color: #fff;
+    }
+
+    .speech-listener__stop {
+        background-color: #FF4C26;
+    }
+
+    .stop-block {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 50px;
+        height: 50px;
+        background-color: #fff;
+    }
+</style>
 
 <body>
     <button id="record-start">录制音频</button>
     <button id="record-stop">结束录音</button>
+    <textarea id="text"></textarea>
+    <button id="chat">发送</button>
+    <div id="result"></div>
 </body>
+<script>
+    const vConsole = new VConsole();
+</script>
+<script src="./wad.js"></script>
 <script src="./index.js"></script>
 
 </html>

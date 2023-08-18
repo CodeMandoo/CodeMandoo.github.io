@@ -1,7 +1,7 @@
 let webAudioSpeechRecognizer;
 let isCanStop;
 
-const socket = new WebSocket('wss://192.168.123.47:7006')
+const socket = new WebSocket('ws://192.168.123.47:7006')
 
 // Connection opened
 socket.addEventListener('open', function (event) {
@@ -9,6 +9,16 @@ socket.addEventListener('open', function (event) {
 });
 
 const commands = ['跑', '走', '跳','调头','站起来','左转','右转', '蹲下', '正向转圈', '反向转圈','左侧走', '右侧走', '前进', '后退','停止','跳跃', '拜年', '跳舞', '摇摆']
+
+const gptSocket = new WebSocket('ws://192.168.31.109:3001')
+
+gptSocket.onopen = () => {
+  console.log('连接gptsocket成功');
+}
+
+gptSocket.onmessage = (data) => {
+  console.log('获取命令', data.data);
+}
 
 $(function () {
   const params = {
@@ -59,6 +69,8 @@ $(function () {
       resultText += res.result.voice_text_str;
       const recognizeText = res.result.voice_text_str
       const command = recognizeText.slice(0 ,recognizeText.length-1)
+      console.log(command);
+      gptSocket.send(command)
       if(commands.includes(command)){
           $('#command').text(command)
           socket.send(command)
