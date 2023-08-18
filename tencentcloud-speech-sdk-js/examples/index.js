@@ -18,6 +18,7 @@ gptSocket.onopen = () => {
 
 gptSocket.onmessage = (data) => {
   console.log('获取命令', data.data);
+  document.querySelector('#command').innerText = data.data
 }
 
 $(function () {
@@ -71,6 +72,7 @@ $(function () {
       const command = recognizeText.slice(0 ,recognizeText.length-1)
       console.log(command);
       gptSocket.send(command)
+      document.querySelector('#command').innerText = '[分析中...]'
       if(commands.includes(command)){
           $('#command').text(command)
           socket.send(command)
