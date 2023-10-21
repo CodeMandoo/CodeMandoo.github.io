@@ -12,6 +12,12 @@
 <body>
     <div class="content-box">
         <div class="content">
+            <div class="content-item">
+                可控制命令：【跑】【走】【跳】【调头】【站起来】【左转】【右转】【蹲下】【正向转圈】【反向转圈】【左侧走】【右侧走】【前进】【后退】【停止】【跳跃】【拜年】【跳舞】【摇摆】
+            </div>
+            <div class="content-item">
+                <div id="recognizeText" class="recognize-content"></div>
+            </div>
             <div class="content-item left-content">
                 <button class="button" id="start">开始识别</button>
                 <div class="connecting display-none" id="connecting">建立连接中...</div>
@@ -19,10 +25,7 @@
                 <button class="button end-btn" id="end">结束识别</button>
             </div>
             <div class="content-item">
-                <div id="recognizeText" class="recognize-content"></div>
-            </div>
-            <div class="content-item">
-                <div>执行命令：<span id="command"></span></div>
+                <div><span id="wakeStatus">（未唤醒） </span>执行命令：<span id="command"></span></div>
             </div>
         </div>
     </div>

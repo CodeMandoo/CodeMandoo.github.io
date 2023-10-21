@@ -8,18 +8,24 @@ socket.addEventListener('open', function (event) {
   socket.send('Hello Server!');
 });
 
+const wakeWord = '麒麟'
+
+let isWake = false
+
+let wakeTimer = null
+
 const commands = ['跑', '走', '跳','调头','站起来','左转','右转', '蹲下', '正向转圈', '反向转圈','左侧走', '右侧走', '前进', '后退','停止','跳跃', '拜年', '跳舞', '摇摆']
 
-const gptSocket = new WebSocket('ws://192.168.31.109:3001')
+// const gptSocket = new WebSocket('ws://192.168.31.109:3001')
 
-gptSocket.onopen = () => {
-  console.log('连接gptsocket成功');
-}
+// gptSocket.onopen = () => {
+//   console.log('连接gptsocket成功');
+// }
 
-gptSocket.onmessage = (data) => {
-  console.log('获取命令', data.data);
-  document.querySelector('#command').innerText = data.data
-}
+// gptSocket.onmessage = (data) => {
+//   console.log('获取命令', data.data);
+//   document.querySelector('#command').innerText = data.data
+// }
 
 $(function () {
   const params = {
@@ -71,11 +77,21 @@ $(function () {
       const recognizeText = res.result.voice_text_str
       const command = recognizeText.slice(0 ,recognizeText.length-1)
       console.log(command);
-      gptSocket.send(command)
-      document.querySelector('#command').innerText = '[分析中...]'
-      if(commands.includes(command)){
+      // gptSocket.send(command)
+      if(command.includes(wakeWord)) {
+        isWake = true
+        $('#wakeStatus').text('（已唤醒）')
+        clearTimeout(wakeTimer)
+        wakeTimer = setTimeout(() => {
+          isWake = false
+          $('#wakeStatus').text('（未唤醒）')
+        }, 60000)
+      }
+      // document.querySelector('#command').innerText = '[分析中...]'
+      if(commands.includes(command) && isWake){
           $('#command').text(command)
-          socket.send(command)
+          // socket.send(command)
+          document.querySelector('#command').innerText = command
         }
       areaDom.text(resultText);
     };
