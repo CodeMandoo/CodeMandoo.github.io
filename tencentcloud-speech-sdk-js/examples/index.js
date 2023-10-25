@@ -90,7 +90,7 @@ $(function () {
       // document.querySelector('#command').innerText = '[分析中...]'
       if(commands.includes(command) && isWake){
           $('#command').text(command)
-          // socket.send(command)
+          socket.send(command)
           document.querySelector('#command').innerText = command
         }
       areaDom.text(resultText);
